@@ -14,13 +14,14 @@ uspvdb <- read_sf("data/uspvdb_v1_0_20231108.geojson") %>%
 abbrev_key <- tibble(name = state.name, state.abb)
 
 region_key <- tibble(name = spData::us_states$NAME, region = spData::us_states$REGION) %>%
-    left_join(abbrev_key)
+    left_join(abbrev_key) %>%
+    mutate(state.abb = if_else(name == "District of Columbia", "DC", state.abb)) %>%
+    arrange(name)
 
 uspvdb_new <- uspvdb %>%
     left_join(region_key, by = c("p_state" = "state.abb")) %>%
     filter(!p_state %in% c("AK", "HI")) %>% # CONUS
     mutate(
-        region = if_else(p_state == "DC", "Norteast", region),
         cap_per_acre = p_cap_dc/acreage*1000 # (kW/acre)
     )
 
@@ -31,6 +32,8 @@ region_map <- uspvdb_new %>%
     geom_sf(aes(size = acreage, fill = region, color = region))
 
 region_map
+
+# Plot histograms of acres and capacity per acre by region
 
 fig_1_data <- uspvdb_new %>%
     select(p_name, region, acreage, cap_per_acre) %>%
@@ -52,3 +55,40 @@ hists <- fig_1_data %>%
 
 ggsave("results/hists.png", hists)
 
+# Plot map of capacity (DC) by county
+
+county_capacity <- uspvdb_new %>%
+    st_drop_geometry() %>%
+    mutate(group = if_else(p_state == "CT", "CT Combined", paste(p_state, p_county))) %>%
+    group_by(group) %>%
+    summarise(county_capacity = sum(p_cap_dc))
+
+county_map <- tigris::counties()
+
+county_capacity_sf <- left_join(county_map, fips_codes, by = c("STATEFP" = "state_code", "COUNTYFP" = "county_code")) %>%
+    mutate(group = if_else(state == "CT", "CT Combined", paste(state, NAME))) %>% # Combine CT counties
+    mutate(group = if_else(str_detect(group, "^NM.*Ana$"), "NM Dona Ana", group)) %>% # Get rid of tilde :/
+    group_by(state, group) %>%
+    summarise(geometry = st_union(geometry), land_area = sum(ALAND)) %>%
+    left_join(county_capacity)
+
+county_cap_map <- county_capacity_sf %>%
+    mutate(
+        county_capacity = replace_na(county_capacity, .5),
+        cc_bins = cut(
+            county_capacity, 
+            breaks = c(0,10^(0:4)), 
+            labels = c("0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
+    ) %>%
+    filter(state %in% region_key$state.abb) %>%
+    ggplot() +
+    geom_sf(aes(fill = cc_bins), color = alpha("black", .2)) +
+    scale_fill_viridis_d(option = "mako", begin = .3, direction = -1) +
+    theme_minimal() +
+    labs(
+        fill = "Megawatts of nameplate solar\ncapacity (DC) by county", 
+        caption = "Note: Connecticut counties temporarily aggregated due to data-joining issues"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("./results/county_cap_map.png", county_cap_map, width = 11, height = 7)
