@@ -57,26 +57,26 @@ ggsave("results/hists.png", hists, width = 11, height = 7)
 
 # Plot map of capacity (DC) by county
 
-county_capacity <- uspvdb_new %>%
+county_area <- uspvdb_new %>%
     st_drop_geometry() %>%
     mutate(group = if_else(p_state == "CT", "CT Combined", paste(p_state, p_county))) %>%
     group_by(group) %>%
-    summarise(county_capacity = sum(p_cap_dc))
+    summarise(county_area = sum(p_area))
 
 county_map <- tigris::counties()
 
-county_capacity_sf <- left_join(county_map, fips_codes, by = c("STATEFP" = "state_code", "COUNTYFP" = "county_code")) %>%
+county_area_sf <- left_join(county_map, fips_codes, by = c("STATEFP" = "state_code", "COUNTYFP" = "county_code")) %>%
     mutate(group = if_else(state == "CT", "CT Combined", paste(state, NAME))) %>% # Combine CT counties
     mutate(group = if_else(str_detect(group, "^NM.*Ana$"), "NM Dona Ana", group)) %>% # Get rid of tilde :/
     group_by(state, group) %>%
     summarise(geometry = st_union(geometry), land_area = sum(ALAND)) %>%
-    left_join(county_capacity)
+    left_join(county_area)
 
-county_cap_map <- county_capacity_sf %>%
+county_area_map <- county_area_sf %>%
     mutate(
-        county_capacity = replace_na(county_capacity, 0),
+        county_area = replace_na(county_area, 0),
         cc_bins = cut(
-            county_capacity/land_area*1e9, # sq m -> sq km, MW -> kW 
+            county_area/land_area*1e6, # sq m -> sq km 
             breaks = c(-1,10^(0:4)), 
             labels = c("0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
     ) %>%
@@ -86,9 +86,9 @@ county_cap_map <- county_capacity_sf %>%
     scale_fill_viridis_d(option = "mako", begin = .3, direction = -1) +
     theme_minimal() +
     labs(
-        fill = "Kilowatts of utility-scale\nsolar capacity per square\nkilometer by county", 
+        fill = "Square meters of solar facility footprint\nper square kilometer of land area", 
         caption = "Note: Connecticut counties temporarily aggregated due to data-joining issues"
     ) +
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
-ggsave("./results/county_cap_map.png", county_cap_map, width = 11, height = 7)
+ggsave("./results/county_area_map.png", county_area_map, width = 11, height = 7)
