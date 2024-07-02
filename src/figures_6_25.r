@@ -81,6 +81,7 @@ county_area_map <- county_area_sf %>%
             labels = c("0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
     ) %>%
     filter(state %in% region_key$state.abb) %>%
+    st_intersection(st_union(spData::us_states)) %>%
     ggplot() +
     geom_sf(aes(fill = cc_bins), color = alpha("black", .2)) +
     scale_fill_viridis_d(option = "mako", begin = .3, direction = -1) +
