@@ -53,7 +53,7 @@ hists <- fig_1_data %>%
         strip.background = element_rect(fill = "white", color = "white")
     )
 
-ggsave("results/hists.png", hists)
+ggsave("results/hists.png", hists, width = 11, height = 7)
 
 # Plot map of capacity (DC) by county
 
@@ -74,10 +74,10 @@ county_capacity_sf <- left_join(county_map, fips_codes, by = c("STATEFP" = "stat
 
 county_cap_map <- county_capacity_sf %>%
     mutate(
-        county_capacity = replace_na(county_capacity, .5),
+        county_capacity = replace_na(county_capacity, 0),
         cc_bins = cut(
-            county_capacity, 
-            breaks = c(0,10^(0:4)), 
+            county_capacity/land_area*1e9, # sq m -> sq km, MW -> kW 
+            breaks = c(-1,10^(0:4)), 
             labels = c("0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
     ) %>%
     filter(state %in% region_key$state.abb) %>%
@@ -86,7 +86,7 @@ county_cap_map <- county_capacity_sf %>%
     scale_fill_viridis_d(option = "mako", begin = .3, direction = -1) +
     theme_minimal() +
     labs(
-        fill = "Megawatts of nameplate solar\ncapacity (DC) by county", 
+        fill = "Kilowatts of utility-scale\nsolar capacity per square\nkilometer by county", 
         caption = "Note: Connecticut counties temporarily aggregated due to data-joining issues"
     ) +
     theme(plot.background = element_rect(fill = "white", color = "white"))
