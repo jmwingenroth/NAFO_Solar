@@ -162,11 +162,10 @@ connecticut <- spData::us_states %>% filter(NAME == "Connecticut") %>%
 county_forest_loss <- left_join(county_map, fips_codes, by = c("STATEFP" = "state_code", "COUNTYFP" = "county_code")) %>%
     filter(state %in% region_key$state.abb) %>%
     filter(state != "CT") %>%
-    transmute(group = paste(state, NAME)) %>%
+    transmute(state, group = paste(state, NAME)) %>%
     mutate(group = if_else(str_detect(group, "^NM.*Ana$"), "NM Dona Ana", group)) %>% # Get rid of tilde :/
     bind_rows(connecticut) %>%
-    left_join(uspvdb_land_cover_agg) %>%
-    select(group, forest_frac, geometry)
+    left_join(uspvdb_land_cover_agg)
 
 forest_loss_map <- county_forest_loss %>%
     mutate(
@@ -191,8 +190,31 @@ forest_loss_map <- county_forest_loss %>%
 
 ggsave("results/forest_loss_map.png", forest_loss_map, width = 11, height = 7)
 
-spData::us_states %>%
-    group_by(REGION) %>%
-    summarise(geometry = st_union(geometry)) %>%
+state_forest_loss <- county_forest_loss %>%
+    group_by(state) %>%
+    summarise(
+        geometry = st_union(geometry), 
+        forest_frac = sum(Forest, na.rm = TRUE) / sum(total_area, na.rm = TRUE)
+    )
+
+state_forest_loss_map <- state_forest_loss %>%
+    mutate(
+        forest_frac = replace_na(forest_frac, -1),
+        ff_bins = cut(
+            forest_frac,
+            breaks = c(-Inf, 0, .25, .5, .75, 1.1), # At least one county had 100% forest
+            right = FALSE,
+            labels = c("No facilities in USPVDB", "0% to 25%", "25% to 50%", "50% to 75%", "75% to 100%")
+        )
+    ) %>%
+    st_intersection(st_union(spData::us_states)) %>%
     ggplot() +
-    geom_sf()
+    geom_sf(aes(fill = ff_bins), color = alpha("black", .2)) +
+    scale_fill_viridis_d(option = "rocket", begin = .475, direction = -1) +
+    theme_minimal() +
+    labs(
+        fill = "Percentage of solar facility footprint\noccupying previously forested land"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/state_forest_loss_map.png", state_forest_loss_map, width = 11, height = 7)
