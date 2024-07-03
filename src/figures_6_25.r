@@ -23,14 +23,6 @@ uspvdb_new <- uspvdb %>%
         cap_per_acre = p_cap_dc/acreage*1000 # (kW/acre)
     )
 
-region_map <- uspvdb_new %>%
-    st_centroid() %>%
-    ggplot() +
-    geom_sf(data = spData::us_states, show.legend = FALSE) +
-    geom_sf(aes(size = acreage, fill = region, color = region))
-
-region_map
-
 # Plot histograms of acres and capacity per acre by region
 
 fig_1_data <- uspvdb_new %>%
