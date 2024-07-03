@@ -106,7 +106,7 @@ state_area_map <- state_area_sf %>%
     st_intersection(st_union(spData::us_states)) %>%
     ggplot() +
     geom_sf(aes(fill = area_bins), color = alpha("black", .2)) +
-    scale_fill_viridis_d(option = "mako", begin = .5, direction = -1) +
+    scale_fill_viridis_d(option = "mako", begin = .475, direction = -1) +
     theme_minimal() +
     labs(
         fill = "Square meters of solar facility footprint\nper square kilometer of land area"
