@@ -45,7 +45,7 @@ hists <- fig_1_data %>%
 
 ggsave("results/hists.png", hists, width = 11, height = 7)
 
-# Plot map of capacity (DC) by county
+# Plot map of area ratio (m^2 solar per km^2 land area)
 
 county_area <- uspvdb_new %>%
     st_drop_geometry() %>%
@@ -68,7 +68,8 @@ county_area_map <- county_area_sf %>%
         cc_bins = cut(
             county_area/land_area*1e6, # sq m -> sq km 
             breaks = c(-Inf,0,10^(0:4)), 
-            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
+            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000")
+        )
     ) %>%
     filter(state %in% region_key$state.abb) %>%
     st_intersection(st_union(spData::us_states)) %>%
@@ -83,3 +84,33 @@ county_area_map <- county_area_sf %>%
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
 ggsave("results/county_area_map.png", county_area_map, width = 11, height = 7)
+
+# Plot map
+
+state_area_sf <- county_area_sf %>%
+    filter(state %in% region_key$state.abb) %>%
+    group_by(state) %>%
+    summarise(
+        geometry = st_union(geometry), 
+        area_ratio = sum(county_area, na.rm = TRUE)/sum(land_area)*1e6 # sq m -> sq km
+    )
+
+state_area_map <- state_area_sf %>%
+    mutate(
+        area_bins = cut(
+            area_ratio,
+            breaks = c(-Inf,0,10^(0:4)), 
+            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000")
+        )
+    ) %>%
+    st_intersection(st_union(spData::us_states)) %>%
+    ggplot() +
+    geom_sf(aes(fill = area_bins), color = alpha("black", .2)) +
+    scale_fill_viridis_d(option = "mako", begin = .5, direction = -1) +
+    theme_minimal() +
+    labs(
+        fill = "Square meters of solar facility footprint\nper square kilometer of land area"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/state_area_map.png", state_area_map, width = 11, height = 7)
