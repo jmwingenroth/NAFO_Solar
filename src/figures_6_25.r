@@ -3,13 +3,11 @@ library(sf)
 library(spData)
 library(cowplot)
 library(tigris)
-library(tidycensus)
 
 sf_use_s2(FALSE)
 
 uspvdb <- read_sf("data/uspvdb_v1_0_20231108.geojson") %>%
     mutate(acreage = p_area/4046.8564224) # Convert units
-
 
 abbrev_key <- tibble(name = state.name, state.abb)
 
@@ -74,11 +72,11 @@ county_area_sf <- left_join(county_map, fips_codes, by = c("STATEFP" = "state_co
 
 county_area_map <- county_area_sf %>%
     mutate(
-        county_area = replace_na(county_area, 0),
+        county_area = replace_na(county_area, -1),
         cc_bins = cut(
             county_area/land_area*1e6, # sq m -> sq km 
-            breaks = c(-1,10^(0:4)), 
-            labels = c("0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
+            breaks = c(-Inf,0,10^(0:4)), 
+            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000"))
     ) %>%
     filter(state %in% region_key$state.abb) %>%
     st_intersection(st_union(spData::us_states)) %>%
@@ -92,4 +90,4 @@ county_area_map <- county_area_sf %>%
     ) +
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
-ggsave("./results/county_area_map.png", county_area_map, width = 11, height = 7)
+ggsave("results/county_area_map.png", county_area_map, width = 11, height = 7)
