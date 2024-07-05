@@ -1,5 +1,7 @@
 library(tidyverse)
 library(sf)
+library(spData)
+library(broom)
 
 ### Load data
 
@@ -22,7 +24,7 @@ aeo_tidy <- aeo_raw %>%
     transmute(
         p_year = Year,
         p_cap_dc_cumul = `Renewable Energy: All Sectors: Net Summer Capacity: Solar GW`*1000, # GW -> MW
-        dataset = "EIA AEO projection (reference case)"
+        dataset = "EIA AEO 2023 projection (reference case)"
     ) %>%
     filter(p_year > 2021) # Drop missing value
 
@@ -30,8 +32,14 @@ all_data <- bind_rows(uspvdb_annual, aeo_tidy) %>%
     arrange(p_year) %>%
     mutate(dataset = factor(
         dataset,
-        levels = c("Historical (USPVDB)", "EIA AEO projection (reference case)")
+        levels = c("Historical (USPVDB)", "EIA AEO 2023 projection (reference case)")
     ))
+
+### Analyze data
+
+# Weighted least-squares regression to account for improvements in area efficiency
+area_eff_lm <- lm(I(p_cap_dc/p_area*1e6) ~ p_year, data = filter(uspvdb_raw, p_year > 2000), weights = p_area) %>%
+    tidy()
 
 ### Create figures
 
