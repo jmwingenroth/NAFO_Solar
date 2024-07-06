@@ -1,3 +1,5 @@
+
+
 # uspvdb_v1_0_20231108.geojson
 ## [1.0.0] - 2023-11-08
 - First public release of the USPVDB.
@@ -15,6 +17,7 @@
 	- Enhanced geolocation controls.
 	- Extended solar facility pop-up information.
 
- # NST-EST2023-ALLDATA.csv
- - [US Census dataset](https://www.census.gov/data/tables/time-series/demo/popest/2020s-state-total.html#v2023)
- - Annual Population Estimates, Estimated Components of Resident Population Change, and Rates of the Components of Resident Population Change for the United States, States, District of Columbia, and Puerto Rico: April 1, 2020 to July 1, 2023
+ # EIA_data.csv
+- 2023 Annual Energy Outlook
+- Renewable Energy All Sectors Net Summer Capacity Solar (Case Reference case)
+- Accessed from [EIA website](https://www.eia.gov/outlooks/aeo/data/browser/#/?id=16-AEO2023&region=0-0&cases=ref2023&start=2021&end=2050&f=A&linechart=~ref2023-d020623a.53-16-AEO2023&ctype=linechart&sourcekey=0)
