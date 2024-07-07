@@ -192,3 +192,73 @@ p4 <- state_sf %>%
 
 ggsave("results/state_forest_loss_map.png", p4, width = 11, height = 7)
 
+# Land cover category most often found within solar facility footprint
+
+p5 <- county_sf %>% 
+    pivot_longer(Water:Wetlands) %>% 
+    group_by(county_id) %>%
+    filter(value == max(value)) %>% 
+    filter(name == first(name)) %>% # Resolve 2 ties out of 832 counties
+    mutate(name = factor(
+        name,
+        levels = c(
+            "Agricultural",
+            "Developed",
+            "Forest",
+            "Herbaceous",
+            "Shrubland"
+        )
+    )) %>%
+    filter(!is.na(name)) %>%
+    ggplot() +
+    geom_sf(data = county_sf, fill = "#e6e9ec", color = alpha("black", .2)) +
+    geom_sf(aes(fill = name), color = alpha("black", .2)) +
+    scale_fill_manual(values = c(
+        "#f5e9b3",
+        "#ffb3b1",
+        "#62b971",
+        "#c4e2fa",
+        "#d6cfe4"
+    )) +
+    theme_minimal() +
+    labs(
+        fill = "Land cover category with greatest\nland area converted to solar facilties"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/county_category_map.png", p5, width = 11, height = 7)
+
+p6 <- state_sf %>% 
+    pivot_longer(Water:Wetlands) %>% 
+    group_by(NAME) %>%
+    filter(value == max(value)) %>% 
+    filter(name == first(name)) %>% # States without solar had all zeros for `value`
+    mutate(name = if_else(name == "Water", "No facilities in USPVDB", name)) %>%
+    mutate(name = factor(
+        name,
+        levels = c(
+            "Agricultural",
+            "Developed",
+            "Forest",
+            "Herbaceous",
+            "Shrubland",
+            "No facilities in USPVDB"
+        )
+    )) %>%
+    ggplot() +
+    geom_sf(aes(fill = name), color = alpha("black", .2)) +
+    scale_fill_manual(values = c(
+        "#f5e9b3",
+        "#ffb3b1",
+        "#62b971",
+        "#c4e2fa",
+        "#d6cfe4",
+        "#e6e9ec"
+    )) +
+    theme_minimal() +
+    labs(
+        fill = "Land cover category with greatest\nland area converted to solar facilties"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/state_category_map.png", p6, width = 11, height = 7)
