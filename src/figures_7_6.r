@@ -56,12 +56,14 @@ county_lc <- uspvdb %>%
     select(p_county, p_state, p_area) %>%
     bind_cols(uspv_lc) %>% # Order is conserved when clipping
     mutate(county_id = if_else(p_state == "CT", "CT combined", paste(p_state, p_county))) %>%
-    group_by(county_id) %>%
+    group_by(p_state, county_id) %>%
     summarise(
         across(`Hay/Pasture`:`Open Water`, \(x) sum(x, na.rm = TRUE)*30^2), # Convert to m^2
         solar_area = sum(p_area)
     ) %>% 
+    ungroup() %>%
     transmute(
+        p_state,
         county_id,
         solar_area,
         Water = `Open Water`,
@@ -74,18 +76,35 @@ county_lc <- uspvdb %>%
         Wetlands = rowSums(across(contains("Wetlands")))
     )
 
-### Add in county geographic data and transform areas to percentage of county area
+### Add in geographic data
 
-county_sf <- tigris::counties() %>%
+county_raw <- tigris::counties()
+
+county_tidy <-  county_raw %>%
     left_join(tigris::fips_codes, by = c("STATEFP" = "state_code", "COUNTYFP" = "county_code")) %>%
     mutate(county_id = if_else(state == "CT", "CT combined", paste(state, NAME))) %>%
     mutate(county_id = if_else(str_detect(county_id, "^NM.*Ana$"), "NM Dona Ana", county_id)) %>%
-    group_by(county_id) %>%
+    group_by(state, county_id) %>%
     summarise(county_area = sum(ALAND))
 
-p1 <- county_sf %>%
-    left_join(county_lc, by = "county_id") %>%
+state_key <- tibble(state.name, state.abb)
+
+county_sf <- county_tidy %>%
     st_intersection(st_union(spData::us_states)) %>%
+    left_join(county_lc, by = "county_id") 
+
+state_tidy <- county_sf %>%
+    st_drop_geometry() %>%
+    group_by(state) %>%
+    summarise(across(c(county_area, solar_area, Water:Wetlands), \(x) sum(x, na.rm = TRUE)))
+
+state_sf <- spData::us_states %>%
+    left_join(state_key, by = c("NAME" = "state.name")) %>%
+    left_join(state_tidy, by = c("state.abb" = "state"))
+
+### Create plots
+
+p1 <- county_sf %>%
     mutate(
         solar_area = replace_na(solar_area, -1),
         cc_bins = cut(
@@ -104,3 +123,26 @@ p1 <- county_sf %>%
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
 ggsave("results/county_area_map.png", p1, width = 11, height = 7)
+
+p2 <- state_sf %>%
+    mutate(
+        solar_area = replace_na(solar_area, -1),
+        county_area = replace_na(county_area, 1),
+        area_bins = cut(
+            solar_area/county_area*1e6,
+            breaks = c(-Inf,0,10^(0:4)), 
+            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000")
+        )
+    ) %>%
+    ggplot() +
+    geom_sf(aes(fill = area_bins), color = alpha("black", .2)) +
+    scale_fill_viridis_d(option = "mako", begin = .475, direction = -1) +
+    theme_minimal() +
+    labs(
+        fill = "Square meters of solar facility footprint\nper square kilometer of land area"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/state_area_map.png", p2, width = 11, height = 7)
+    
+
