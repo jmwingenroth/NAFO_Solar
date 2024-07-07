@@ -145,4 +145,24 @@ p2 <- state_sf %>%
 
 ggsave("results/state_area_map.png", p2, width = 11, height = 7)
     
+p3 <- county_sf %>%
+    mutate(
+        forest_frac = replace_na(Forest/solar_area, -1),
+        ff_bins = cut(
+            forest_frac,
+            breaks = c(-Inf, 0, .25, .5, .75, 1.1), # At least one county had 100% forest
+            right = FALSE,
+            labels = c("No facilities in USPVDB", "0% to 25%", "25% to 50%", "50% to 75%", "75% to 100%")
+        )
+    ) %>%
+    ggplot() +
+    geom_sf(aes(fill = ff_bins), color = alpha("black", .2)) +
+    scale_fill_viridis_d(option = "rocket", begin = .3, direction = -1) +
+    theme_minimal() +
+    labs(
+        fill = "Percentage of solar facility footprint\noccupying previously forested land"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/forest_loss_map.png", p3, width = 11, height = 7)
 
