@@ -1,6 +1,7 @@
+##### Make projection figures using USPVDB and EIA AEO datasets #####
+
 library(tidyverse)
 library(sf)
-library(spData)
 library(broom)
 
 ### Load data
@@ -67,22 +68,22 @@ all_data_lm <- all_data %>%
 
 ### Create figures
 
-# Data research plots
+# Diagnostic plots
 
-p1 <- uspvdb_annual %>%
+dir.create("misc")
+
+proj_1 <- uspvdb_annual %>%
     pivot_longer(p_cap_dc:p_area_cumul) %>%
     ggplot(aes(x = p_year, y = value, color = name)) +
     geom_line(show.legend = FALSE) +
     facet_wrap(~name, scales = "free_y") +
     theme_bw()
 
-ggsave("results/line_graph.png", p1)
-
-
+ggsave("misc/line_graph.png", proj_1)
 
 # Solar capacity figure
 
-p2 <- all_data %>%
+proj_2 <- all_data %>%
     ggplot(aes(x = p_year, y = p_cap_dc_cumul/1e9, color = dataset)) +
     geom_line() +
     theme_bw() +
@@ -95,11 +96,11 @@ p2 <- all_data %>%
     scale_x_continuous(limits = c(2000, NA)) +
     theme(legend.position = "bottom")
 
-ggsave("results/capacity_projection.png", p2, width = 7, height = 4)
+ggsave("results/capacity_projection.png", proj_2, width = 7, height = 4)
 
 # Land area figure
 
-p3 <- all_data_lm %>%
+proj_3 <- all_data_lm %>%
     ggplot(aes(x = p_year, y = p_area_cumul/1e6, color = dataset)) +
     geom_line() +
     theme_bw() +
@@ -112,4 +113,4 @@ p3 <- all_data_lm %>%
     scale_x_continuous(limits = c(2000, NA)) +
     theme(legend.position = "bottom")
 
-ggsave("results/area_projection.png", p3, width = 7, height = 4)
+ggsave("results/area_projection.png", proj_3, width = 7, height = 4)

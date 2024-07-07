@@ -1,4 +1,4 @@
-##### Most common land cover converted to solar facilities by county/state #####
+##### Create maps based on NLCD and USPVDB datasets #####
 
 ### Load packages
 
