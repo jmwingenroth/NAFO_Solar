@@ -87,7 +87,8 @@ county_tidy <-  county_raw %>%
     group_by(state, county_id) %>%
     summarise(county_area = sum(ALAND))
 
-state_key <- tibble(state.name, state.abb)
+state_key <- tibble(state.name, state.abb) %>%
+    bind_rows(tibble(state.name = "District of Columbia", state.abb = "DC"))
 
 county_sf <- county_tidy %>%
     st_intersection(st_union(spData::us_states)) %>%
@@ -103,6 +104,8 @@ state_sf <- spData::us_states %>%
     left_join(state_tidy, by = c("state.abb" = "state"))
 
 ### Create plots
+
+# Solar area / county area
 
 p1 <- county_sf %>%
     mutate(
@@ -144,7 +147,9 @@ p2 <- state_sf %>%
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
 ggsave("results/state_area_map.png", p2, width = 11, height = 7)
-    
+
+# Forest area / solar area
+
 p3 <- county_sf %>%
     mutate(
         forest_frac = replace_na(Forest/solar_area, -1),
@@ -164,5 +169,26 @@ p3 <- county_sf %>%
     ) +
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
-ggsave("results/forest_loss_map.png", p3, width = 11, height = 7)
+ggsave("results/county_forest_loss_map.png", p3, width = 11, height = 7)
+
+p4 <- state_sf %>%
+    mutate(
+        forest_frac = replace_na(Forest/solar_area, -1),
+        ff_bins = cut(
+            forest_frac,
+            breaks = c(-Inf, 0, .25, .5, .75, 1.1), # At least one county had 100% forest
+            right = FALSE,
+            labels = c("No facilities in USPVDB", "0% to 25%", "25% to 50%", "50% to 75%", "75% to 100%")
+        )
+    ) %>%
+    ggplot() +
+    geom_sf(aes(fill = ff_bins), color = alpha("black", .2)) +
+    scale_fill_viridis_d(option = "rocket", begin = .475, direction = -1) +
+    theme_minimal() +
+    labs(
+        fill = "Percentage of solar facility footprint\noccupying previously forested land"
+    ) +
+    theme(plot.background = element_rect(fill = "white", color = "white"))
+
+ggsave("results/state_forest_loss_map.png", p4, width = 11, height = 7)
 
