@@ -51,12 +51,12 @@ uspv_lc <- uspv_stars %>%
     lapply(pivot_wider, names_from = land_cover, values_from = n) %>%
     bind_rows()
 
-county_lc <- uspvdb %>%
+county_year_lc <- uspvdb %>%
     st_drop_geometry() %>%
-    select(p_county, p_state, p_area) %>%
+    select(p_county, p_state, p_year, p_area) %>%
     bind_cols(uspv_lc) %>% # Order is conserved when clipping
     mutate(county_id = if_else(p_state == "CT", "CT combined", paste(p_state, p_county))) %>%
-    group_by(p_state, county_id) %>%
+    group_by(p_state, county_id, p_year) %>%
     summarise(
         across(`Hay/Pasture`:`Open Water`, \(x) sum(x, na.rm = TRUE)*30^2), # Convert to m^2
         solar_area = sum(p_area)
@@ -65,6 +65,7 @@ county_lc <- uspvdb %>%
     transmute(
         p_state,
         county_id,
+        p_year,
         solar_area,
         Water = `Open Water`,
         Developed = rowSums(across(contains("Developed"))),
@@ -75,6 +76,10 @@ county_lc <- uspvdb %>%
         Agricultural = `Hay/Pasture` + `Cultivated Crops`,
         Wetlands = rowSums(across(contains("Wetlands")))
     )
+
+county_lc <- county_year_lc %>%
+    group_by(p_state, county_id) %>%
+    summarise(across(solar_area:Wetlands, sum))
 
 ### Add in geographic data
 
@@ -262,3 +267,11 @@ p6 <- state_sf %>%
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
 ggsave("results/state_category_map.png", p6, width = 11, height = 7)
+
+# Land cover category by year
+
+county_year_lc %>%
+    filter(p_year %in% 2006:2021) %>%
+    pivot_longer(Water:Wetlands) %>%
+    ggplot(aes(x = p_year, y = value, fill = name)) +
+    geom_area()
