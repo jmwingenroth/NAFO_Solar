@@ -207,11 +207,11 @@ p5 <- county_sf %>%
     mutate(name = factor(
         name,
         levels = c(
-            "Agricultural",
             "Developed",
-            "Forest",
             "Herbaceous",
-            "Shrubland"
+            "Shrubland",
+            "Agricultural",
+            "Forest"
         )
     )) %>%
     filter(!is.na(name)) %>%
@@ -219,12 +219,14 @@ p5 <- county_sf %>%
     geom_sf(data = county_sf, fill = "#e6e9ec", color = alpha("black", .2)) +
     geom_sf(aes(fill = name), color = alpha("black", .2)) +
     scale_fill_manual(values = c(
-        "#f5e9b3",
         "#ffb3b1",
-        "#62b971",
         "#c4e2fa",
-        "#d6cfe4"
-    )) +
+        "#d6cfe4",
+        "#f5e9b3",
+        "#62b971"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
     theme_minimal() +
     labs(
         fill = "Land cover category with greatest\nland area converted to solar facilties"
@@ -242,24 +244,26 @@ p6 <- state_sf %>%
     mutate(name = factor(
         name,
         levels = c(
-            "Agricultural",
+            "No facilities in USPVDB",
             "Developed",
-            "Forest",
             "Herbaceous",
             "Shrubland",
-            "No facilities in USPVDB"
+            "Agricultural",
+            "Forest"
         )
     )) %>%
     ggplot() +
     geom_sf(aes(fill = name), color = alpha("black", .2)) +
     scale_fill_manual(values = c(
-        "#f5e9b3",
+        "#e6e9ec",
         "#ffb3b1",
-        "#62b971",
         "#c4e2fa",
         "#d6cfe4",
-        "#e6e9ec"
-    )) +
+        "#f5e9b3",
+        "#62b971"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
     theme_minimal() +
     labs(
         fill = "Land cover category with greatest\nland area converted to solar facilties"
@@ -270,8 +274,54 @@ ggsave("results/state_category_map.png", p6, width = 11, height = 7)
 
 # Land cover category by year
 
-county_year_lc %>%
+region_percent_lc <- county_year_lc %>%
     filter(p_year %in% 2006:2021) %>%
-    pivot_longer(Water:Wetlands) %>%
-    ggplot(aes(x = p_year, y = value, fill = name)) +
-    geom_area()
+    mutate(Other = Water + Wetlands + Barren) %>%
+    select(-Water, -Wetlands, -Barren) %>%
+    pivot_longer(Developed:Other) %>%
+    left_join(st_drop_geometry(state_sf), by = c("p_state" = "state.abb")) %>%
+    group_by(REGION, p_year, name) %>%
+    summarise(value = sum(value)) %>%
+    group_by(REGION, p_year) %>%
+    mutate(percent_value = value/sum(value)) %>%
+    ungroup() %>%
+    mutate(name = factor(
+        name,
+        levels = c(
+            "Other",
+            "Developed",
+            "Herbaceous",
+            "Shrubland",
+            "Agricultural",
+            "Forest"
+        )
+    ))
+
+p7 <- region_percent_lc %>%
+    mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
+    ggplot(aes(x = p_year, y = percent_value, fill = name)) +
+    geom_area(alpha = .8, color = alpha("black", .2)) +
+    facet_wrap(~REGION) +
+    scale_fill_manual(values = c(
+        "#e6e9ec",
+        "#ffb3b1",
+        "#c4e2fa",
+        "#d6cfe4",
+        "#f5e9b3",
+        "#62b971"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
+    scale_x_continuous(limits = c(2010, 2021), expand = c(0,0), breaks = 2010:2021) +
+    scale_y_continuous(limits = c(0, 1), expand = c(0,0), labels = scales::percent) +
+    theme_bw() +
+    theme(
+        panel.spacing = unit(.5, "inch"), 
+        legend.position = "bottom",
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.background = element_blank()
+    ) +
+    labs(y = "Fraction of new solar\nfacilities' footprint areas", fill = "Land cover category", x = "Year")
+
+ggsave("results/state_category_area_chart.png", p7, width = 7, height = 7)
