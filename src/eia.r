@@ -27,7 +27,7 @@ aeo_tidy <- aeo_raw %>%
     transmute(
         p_year = Year,
         p_cap_dc_cumul = `Renewable Energy: All Sectors: Net Summer Capacity: Solar GW`*1e9, # GW -> watts
-        dataset = "EIA AEO 2023 projection (reference case)"
+        dataset = "Projected (EIA AEO 2023, reference case)"
     ) %>%
     filter(p_year > 2021) # Drop missing value
 
@@ -36,7 +36,7 @@ all_data <- bind_rows(uspvdb_annual, aeo_tidy) %>%
     mutate(
         dataset = factor(
             dataset,
-            levels = c("Historical (USPVDB)", "EIA AEO 2023 projection (reference case)")
+            levels = c("Historical (USPVDB)", "Projected (EIA AEO 2023, reference case)")
         ),
         p_cap_dc_cumul = round(p_cap_dc_cumul) # Fix weird bug with AEO data
     )
@@ -84,8 +84,10 @@ ggsave("misc/line_graph.png", proj_1)
 # Solar capacity figure
 
 proj_2 <- all_data %>%
+    filter(p_year %in% 2006:2030) %>%
     ggplot(aes(x = p_year, y = p_cap_dc_cumul/1e9, color = dataset)) +
     geom_line() +
+    geom_point() +
     theme_bw() +
     scale_color_manual(values = c("#04273c", "#ebd367")) +
     labs(
@@ -93,16 +95,18 @@ proj_2 <- all_data %>%
         y = "Aggregate national solar\npower capacity (GW)",
         color = ""
     ) +
-    scale_x_continuous(limits = c(2000, NA)) +
-    theme(legend.position = "bottom")
+    scale_x_continuous(limits = c(2004, 2031), expand = c(0,0)) +
+    theme(legend.position = "bottom", panel.grid.minor = element_blank())
 
 ggsave("results/capacity_projection.png", proj_2, width = 7, height = 4)
 
 # Land area figure
 
 proj_3 <- all_data_lm %>%
+    filter(p_year %in% 2006:2030) %>%
     ggplot(aes(x = p_year, y = p_area_cumul/1e6, color = dataset)) +
     geom_line() +
+    geom_point() +
     theme_bw() +
     scale_color_manual(values = c("#04273c", "#ff6663")) +
     labs(
@@ -110,7 +114,8 @@ proj_3 <- all_data_lm %>%
         y = "Total land area of utility-scale\nsolar installations (sq. km.)",
         color = ""
     ) +
-    scale_x_continuous(limits = c(2000, NA)) +
-    theme(legend.position = "bottom")
+    scale_x_continuous(limits = c(2004, 2031), expand = c(0,0)) +
+    scale_y_continuous(limits = c(0, 8000)) +
+    theme(legend.position = "bottom", panel.grid.minor = element_blank())
 
 ggsave("results/area_projection.png", proj_3, width = 7, height = 4)
