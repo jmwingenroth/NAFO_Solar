@@ -325,3 +325,17 @@ p7 <- region_percent_lc %>%
     labs(y = "Fraction of new solar\nfacilities' footprint areas", fill = "Land cover category", x = "Year")
 
 ggsave("results/state_category_area_chart.png", p7, width = 7, height = 7)
+
+p8 <- county_year_lc %>%
+    filter(p_year >= 2006) %>%
+    group_by(p_year) %>%
+    summarise(forest = sum(Forest), total = sum(solar_area)) %>%
+    ggplot(aes(x = p_year, y = forest/1e6)) +
+    geom_line(color = "#62b971") +
+    geom_point(color = "#62b971") +
+    scale_x_continuous(limits = c(2005, 2022), expand = c(0,0), breaks = 2006:2021) +
+    theme_bw() +
+    theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(x = "Year", y = "Square kilometers of forest\nconverted to solar facilities")
+
+ggsave("results/forest_historical.png", p8, width = 7, height = 4)

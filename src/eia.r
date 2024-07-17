@@ -96,7 +96,7 @@ proj_2 <- all_data %>%
         color = ""
     ) +
     scale_x_continuous(limits = c(2004, 2031), expand = c(0,0)) +
-    theme(legend.position = "bottom", panel.grid.minor = element_blank())
+    theme(legend.position = "bottom", panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
 
 ggsave("results/capacity_projection.png", proj_2, width = 7, height = 4)
 
@@ -116,6 +116,6 @@ proj_3 <- all_data_lm %>%
     ) +
     scale_x_continuous(limits = c(2004, 2031), expand = c(0,0)) +
     scale_y_continuous(limits = c(0, 8000)) +
-    theme(legend.position = "bottom", panel.grid.minor = element_blank())
+    theme(legend.position = "bottom", panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
 
 ggsave("results/area_projection.png", proj_3, width = 7, height = 4)
