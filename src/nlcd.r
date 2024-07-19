@@ -116,9 +116,9 @@ p1 <- county_sf %>%
     mutate(
         solar_area = replace_na(solar_area, -1),
         cc_bins = cut(
-            solar_area/county_area*1e6, # sq m -> sq km 
-            breaks = c(-Inf,0,10^(0:4)), 
-            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000")
+            (solar_area/sq_m_per_acre)/(county_area/sq_m_per_sq_mi), # same units -> acres per sq. mi. 
+            breaks = c(-Inf,0,.01,.1,1,5.4), 
+            labels = c("No facilities in USPVDB","0 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 5.4")
         )
     ) %>%
     ggplot() +
@@ -126,7 +126,7 @@ p1 <- county_sf %>%
     scale_fill_viridis_d(option = "mako", begin = .3, direction = -1) +
     theme_minimal() +
     labs(
-        fill = "Square meters of solar facility footprint\nper square kilometer of land area" 
+        fill = "Acres of solar facility footprint\nper square mile of land area" 
     ) +
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
@@ -251,12 +251,12 @@ p8 <- county_year_lc %>%
     filter(p_year >= 2006) %>%
     group_by(p_year) %>%
     summarise(forest = sum(Forest), total = sum(solar_area)) %>%
-    ggplot(aes(x = p_year, y = forest/1e6)) +
+    ggplot(aes(x = p_year, y = forest/sq_m_per_acre)) +
     geom_line(color = "#62b971") +
     geom_point(color = "#62b971") +
     scale_x_continuous(limits = c(2005, 2022), expand = c(0,0), breaks = 2006:2021) +
     theme_bw() +
     theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(x = "Year", y = "Square kilometers of forest\nconverted to solar facilities")
+    labs(x = "Year", y = "", title = "Acres of forest converted to solar facilities")
 
 ggsave("results/forest_historical.png", p8, width = 7, height = 4)
