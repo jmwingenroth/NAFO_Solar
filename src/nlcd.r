@@ -221,9 +221,10 @@ region_percent_lc <- county_year_lc %>%
 
 p7 <- region_percent_lc %>%
     mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
+    mutate(REGION = factor(REGION, levels = c("Northeast", "South", "Midwest", "West"))) %>%
     ggplot(aes(x = p_year, y = percent_value, fill = name)) +
     geom_area(alpha = .8, color = alpha("black", .2)) +
-    facet_wrap(~REGION) +
+    facet_wrap(~REGION, axes = "all") +
     scale_fill_manual(values = c(
         "#e6e9ec",
         "#ffb3b1",
@@ -234,19 +235,19 @@ p7 <- region_percent_lc %>%
         ),
         guide = guide_legend(reverse = TRUE)
     ) +
-    scale_x_continuous(limits = c(2010, 2021), expand = c(0,0), breaks = 2010:2021) +
+    scale_x_continuous(limits = c(2010, 2021), breaks = c(2010, 2015, 2020), expand = c(0,0), minor_breaks = NULL) +
     scale_y_continuous(limits = c(0, 1), expand = c(0,0), labels = scales::percent) +
     theme_bw() +
     theme(
-        panel.spacing = unit(.5, "inch"), 
+        panel.spacing = unit(.25, "inch"), 
         legend.position = "bottom",
         panel.grid.minor = element_blank(),
-        axis.text.x = element_text(angle = 45, hjust = 1),
+        # axis.text.x = element_text(angle = 45, hjust = 1),
         strip.background = element_blank()
     ) +
-    labs(y = "Fraction of new solar\nfacilities' footprint areas", fill = "Land cover category", x = "Year")
+    labs(y = "", fill = "Land cover category", x = "Year")
 
-ggsave("results/state_category_area_chart.png", p7, width = 7, height = 7)
+ggsave("results/region_category_area_chart.svg", p7, width = 7, height = 7)
 
 p8 <- county_year_lc %>%
     filter(p_year >= 2006) %>%
