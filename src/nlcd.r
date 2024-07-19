@@ -132,27 +132,6 @@ p1 <- county_sf %>%
 
 ggsave("results/county_area_map.png", p1, width = 11, height = 7)
 
-p2 <- state_sf %>%
-    mutate(
-        solar_area = replace_na(solar_area, -1),
-        county_area = replace_na(county_area, 1),
-        area_bins = cut(
-            solar_area/county_area*1e6,
-            breaks = c(-Inf,0,10^(0:4)), 
-            labels = c("No facilities in USPVDB","0 to 1", "1 to 10", "10 to 100", "100 to 1,000", "1,000 to 10,000")
-        )
-    ) %>%
-    ggplot() +
-    geom_sf(aes(fill = area_bins), color = alpha("black", .2)) +
-    scale_fill_viridis_d(option = "mako", begin = .475, direction = -1) +
-    theme_minimal() +
-    labs(
-        fill = "Square meters of solar facility footprint\nper square kilometer of land area"
-    ) +
-    theme(plot.background = element_rect(fill = "white", color = "white"))
-
-ggsave("results/state_area_map.png", p2, width = 11, height = 7)
-
 # Forest area / solar area
 
 p3 <- county_sf %>%
@@ -175,27 +154,6 @@ p3 <- county_sf %>%
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
 ggsave("results/county_forest_loss_map.png", p3, width = 11, height = 7)
-
-p4 <- state_sf %>%
-    mutate(
-        forest_frac = replace_na(Forest/solar_area, -1),
-        ff_bins = cut(
-            forest_frac,
-            breaks = c(-Inf, 0, .25, .5, .75, 1.1), # At least one county had 100% forest
-            right = FALSE,
-            labels = c("No facilities in USPVDB", "0% to 25%", "25% to 50%", "50% to 75%", "75% to 100%")
-        )
-    ) %>%
-    ggplot() +
-    geom_sf(aes(fill = ff_bins), color = alpha("black", .2)) +
-    scale_fill_viridis_d(option = "rocket", begin = .475, direction = -1) +
-    theme_minimal() +
-    labs(
-        fill = "Percentage of solar facility footprint\noccupying previously forested land"
-    ) +
-    theme(plot.background = element_rect(fill = "white", color = "white"))
-
-ggsave("results/state_forest_loss_map.png", p4, width = 11, height = 7)
 
 # Land cover category most often found within solar facility footprint
 
@@ -234,43 +192,6 @@ p5 <- county_sf %>%
     theme(plot.background = element_rect(fill = "white", color = "white"))
 
 ggsave("results/county_category_map.png", p5, width = 11, height = 7)
-
-p6 <- state_sf %>% 
-    pivot_longer(Water:Wetlands) %>% 
-    group_by(NAME) %>%
-    filter(value == max(value)) %>% 
-    filter(name == first(name)) %>% # States without solar had all zeros for `value`
-    mutate(name = if_else(name == "Water", "No facilities in USPVDB", name)) %>%
-    mutate(name = factor(
-        name,
-        levels = c(
-            "No facilities in USPVDB",
-            "Developed",
-            "Herbaceous",
-            "Shrubland",
-            "Agricultural",
-            "Forest"
-        )
-    )) %>%
-    ggplot() +
-    geom_sf(aes(fill = name), color = alpha("black", .2)) +
-    scale_fill_manual(values = c(
-        "#e6e9ec",
-        "#ffb3b1",
-        "#c4e2fa",
-        "#d6cfe4",
-        "#f5e9b3",
-        "#62b971"
-        ),
-        guide = guide_legend(reverse = TRUE)
-    ) +
-    theme_minimal() +
-    labs(
-        fill = "Land cover category with greatest\nland area converted to solar facilties"
-    ) +
-    theme(plot.background = element_rect(fill = "white", color = "white"))
-
-ggsave("results/state_category_map.png", p6, width = 11, height = 7)
 
 # Land cover category by year
 
