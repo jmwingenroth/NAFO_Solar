@@ -97,40 +97,41 @@ state_key <- tibble(state.name, state.abb) %>%
 
 county_sf <- county_tidy %>%
     st_intersection(st_union(spData::us_states)) %>%
-    left_join(county_lc, by = "county_id") 
-
-state_tidy <- county_sf %>%
-    st_drop_geometry() %>%
-    group_by(state) %>%
-    summarise(across(c(county_area, solar_area, Water:Wetlands), \(x) sum(x, na.rm = TRUE)))
-
-state_sf <- spData::us_states %>%
-    left_join(state_key, by = c("NAME" = "state.name")) %>%
-    left_join(state_tidy, by = c("state.abb" = "state"))
+    left_join(county_lc, by = "county_id") %>%
+    st_transform(st_crs("+proj=aea +lat_0=37.5 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs")) %>%
+    mutate(solar_density = (solar_area/sq_m_per_acre)/(county_area/sq_m_per_sq_mi)) # same units -> acres per sq. mi. 
 
 ### Create plots
 
 # Solar area / county area
 
 p1 <- county_sf %>%
+    st_simplify(dTolerance = 1000) %>%
     mutate(
-        solar_area = replace_na(solar_area, -1),
+        solar_density = replace_na(solar_density, -1),
         cc_bins = cut(
-            (solar_area/sq_m_per_acre)/(county_area/sq_m_per_sq_mi), # same units -> acres per sq. mi. 
+            solar_density,
             breaks = c(-Inf,0,.01,.1,1,5.4), 
-            labels = c("No facilities in USPVDB","0 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 5.4")
+            labels = c("No facilities","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 5.4")
         )
     ) %>%
     ggplot() +
-    geom_sf(aes(fill = cc_bins), color = alpha("black", .2)) +
-    scale_fill_viridis_d(option = "mako", begin = .3, direction = -1) +
+    geom_sf(aes(fill = cc_bins, color = cc_bins)) +
+    geom_sf(data = spData::us_states, fill = NA, color = "black", linewidth = .3) +
+    scale_fill_viridis_d(
+        option = "mako", 
+        begin = .3, 
+        direction = -1,
+        aesthetics = c("fill", "color")
+    ) +
     theme_minimal() +
     labs(
-        fill = "Acres of solar facility footprint\nper square mile of land area" 
+        fill =  "Acres per square mile:", 
+        color = "Acres per square mile:" 
     ) +
-    theme(plot.background = element_rect(fill = "white", color = "white"))
+    theme(plot.background = element_rect(fill = "white", color = "white"), panel.grid = element_blank(), axis.text = element_blank())
 
-ggsave("results/county_area_map.png", p1, width = 11, height = 7)
+ggsave("results/county_area_map.svg", p1, width = 7, height = 4)
 
 # Forest area / solar area
 
