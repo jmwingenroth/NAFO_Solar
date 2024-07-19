@@ -3,6 +3,7 @@
 library(tidyverse)
 library(sf)
 library(broom)
+library(cowplot)
 
 ### Load data
 
@@ -86,36 +87,53 @@ ggsave("misc/line_graph.png", proj_1)
 proj_2 <- all_data %>%
     filter(p_year %in% 2006:2030) %>%
     ggplot(aes(x = p_year, y = p_cap_dc_cumul/1e9, color = dataset)) +
-    geom_line() +
-    geom_point() +
+    geom_line(show.legend = FALSE) +
+    geom_point(show.legend = FALSE) +
     theme_bw() +
-    scale_color_manual(values = c("#04273c", "#ebd367")) +
+    scale_color_manual(values = c("#04273c", "#88c4f4")) +
     labs(
         x = "Year", 
-        y = "Aggregate national solar\npower capacity (GW)",
+        y = "",
+        title = "Aggregate national solar power capacity (in gigawatts)",
         color = ""
     ) +
     scale_x_continuous(limits = c(2004, 2031), expand = c(0,0)) +
-    theme(legend.position = "bottom", panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
-
-ggsave("results/capacity_projection.png", proj_2, width = 7, height = 4)
+    scale_y_continuous(limits = c(0, 500)) +
+    theme(
+        panel.grid.minor = element_blank(), 
+        panel.grid.major.x = element_blank()
+    )
 
 # Land area figure
 
 proj_3 <- all_data_lm %>%
     filter(p_year %in% 2006:2030) %>%
-    ggplot(aes(x = p_year, y = p_area_cumul/1e6, color = dataset)) +
+    ggplot(aes(x = p_year, y = p_area_cumul/sq_m_per_acre, color = dataset)) +
     geom_line() +
     geom_point() +
     theme_bw() +
-    scale_color_manual(values = c("#04273c", "#ff6663")) +
+    scale_color_manual(values = c("#04273c", "#88c4f4")) +
     labs(
         x = "Year", 
-        y = "Total land area of utility-scale\nsolar installations (sq. km.)",
+        y = "",
+        title = "Total land area of utility-scale solar installations (in acres)",
         color = ""
     ) +
     scale_x_continuous(limits = c(2004, 2031), expand = c(0,0)) +
-    scale_y_continuous(limits = c(0, 8000)) +
-    theme(legend.position = "bottom", panel.grid.minor = element_blank(), panel.grid.major.x = element_blank())
+    scale_y_continuous(limits = c(0, 2e6), labels = scales::unit_format(unit = "M", scale = 1e-6)) +
+    theme(
+        legend.position = "bottom", 
+        panel.grid.minor = element_blank(), 
+        panel.grid.major.x = element_blank()
+    )
 
-ggsave("results/area_projection.png", proj_3, width = 7, height = 4)
+proj_fig <- plot_grid(
+    proj_2, NULL, proj_3, 
+    ncol = 1, 
+    align = "hv", 
+    labels = c("a)", "", "b)"), 
+    rel_heights = c(1, -.1, 1)
+)
+
+ggsave("results/projections.svg", proj_fig, width = 7, height = 7)
+
