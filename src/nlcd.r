@@ -11,6 +11,13 @@ library(spData)
 sf_use_s2(FALSE)
 options(tigris_use_cache = TRUE)
 
+eastern_seaboard <- c(
+    "FL", "GA", "SC", "NC", 
+    "VA", "MD", "DC", "PA", 
+    "DE", "NJ", "NY", "CT", 
+    "RI", "MA", "NH", "ME"
+)
+
 ### Load data
 
 nlcd_file <- list.files("L:/Project-SCC/NLCD_GIS_2001/", pattern = "img", full.names = TRUE)
@@ -93,13 +100,19 @@ county_tidy <-  county_raw %>%
     summarise(county_area = sum(ALAND))
 
 state_key <- tibble(state.name, state.abb) %>%
-    bind_rows(tibble(state.name = "District of Columbia", state.abb = "DC"))
+    bind_rows(tibble(state.name = "District of Columbia", state.abb = "DC")) %>%
+    left_join(spData::us_states, c("state.name" = "NAME")) %>%
+    st_as_sf()
 
 county_sf <- county_tidy %>%
     st_intersection(st_union(spData::us_states)) %>%
     left_join(county_lc, by = "county_id") %>%
     st_transform(st_crs("+proj=aea +lat_0=37.5 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs")) %>%
-    mutate(solar_density = (solar_area/sq_m_per_acre)/(county_area/sq_m_per_sq_mi)) # same units -> acres per sq. mi. 
+    mutate(
+        # same units -> acres per sq. mi. 
+        solar_density = (solar_area/sq_m_per_acre)/(county_area/sq_m_per_sq_mi),
+        forest_density = (Forest/sq_m_per_acre)/(county_area/sq_m_per_sq_mi)
+    ) 
 
 ### Create plots
 
@@ -112,12 +125,12 @@ p1 <- county_sf %>%
         cc_bins = cut(
             solar_density,
             breaks = c(-Inf,0,.01,.1,1,5.4), 
-            labels = c("No facilities","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 5.4")
+            labels = c("0","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 5.4")
         )
     ) %>%
     ggplot() +
     geom_sf(aes(fill = cc_bins, color = cc_bins)) +
-    geom_sf(data = spData::us_states, fill = NA, color = "black", linewidth = .3) +
+    geom_sf(data = state_key, fill = NA, color = "black", linewidth = .3) +
     scale_fill_viridis_d(
         option = "mako", 
         begin = .3, 
@@ -133,22 +146,25 @@ p1 <- county_sf %>%
 
 ggsave("results/county_area_map.svg", p1, width = 7, height = 4)
 
-# Forest area / solar area
+# Forest area / county area
 
 p3 <- county_sf %>%
+    filter(state %in% eastern_seaboard) %>%
     st_simplify(dTolerance = 1000) %>%
     mutate(
-        forest_frac = replace_na(Forest/solar_area, -1),
+        forest_density = replace_na(forest_density, -1),
         ff_bins = cut(
-            forest_frac,
-            breaks = c(-Inf, 0, .25, .5, .75, 1.1), # At least one county had 100% forest
-            right = FALSE,
-            labels = c("No facilities", "0% to 25%", "25% to 50%", "50% to 75%", "75% to 100%")
+            forest_density,
+            breaks = c(-Inf,0,.01,.1,1,5.4), 
+            labels = c("0","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 3.3")
         )
     ) %>%
     ggplot() +
     geom_sf(aes(fill = ff_bins, color = ff_bins)) +
-    geom_sf(data = spData::us_states, fill = NA, color = "black", linewidth = .3) +
+    geom_sf(
+        data = filter(state_key, state.abb %in% eastern_seaboard), 
+        fill = NA, 
+        color = "black", linewidth = .3) +
     scale_fill_viridis_d(
         option = "rocket", 
         begin = .3, 
@@ -157,12 +173,18 @@ p3 <- county_sf %>%
     ) +
     theme_minimal() +
     labs(
-        fill =  "",
-        color = ""
+        fill =  expression(Acres~per~mi^2), 
+        color = expression(Acres~per~mi^2) 
     ) +
-    theme(plot.background = element_rect(fill = "white", color = "white"), panel.grid = element_blank(), axis.text = element_blank())
+    theme(
+        plot.background = element_rect(fill = "white", color = "white"), 
+        panel.grid = element_blank(), 
+        axis.text = element_blank(),
+        legend.position = "bottom",
+        legend.direction = "vertical"
+    )
 
-ggsave("results/county_forest_loss_map.svg", p3, width = 7, height = 4)
+ggsave("results/county_forest_loss_map.svg", p3, width = 3.5, height = 7)
 
 # Land cover category most often found within solar facility footprint
 
