@@ -167,40 +167,55 @@ ggsave("results/county_forest_loss_map.svg", p3, width = 7, height = 4)
 # Land cover category most often found within solar facility footprint
 
 p5 <- county_sf %>% 
-    pivot_longer(Water:Wetlands) %>% 
+    st_simplify(dTolerance = 1000) %>%
+    mutate(Other = Water + Wetlands + Barren) %>%
+    select(-Water, -Wetlands, -Barren) %>%
+    pivot_longer(Developed:Other) %>%
     group_by(county_id) %>%
     filter(value == max(value)) %>% 
-    filter(name == first(name)) %>% # Resolve 2 ties out of 832 counties
+    filter(name == first(name)) %>%
     mutate(name = factor(
         name,
-        levels = c(
+        levels = rev(c(
+            "Other",
             "Developed",
             "Herbaceous",
             "Shrubland",
             "Agricultural",
             "Forest"
-        )
+        )),
+        ordered = TRUE
     )) %>%
-    filter(!is.na(name)) %>%
+    arrange(desc(name)) %>%
     ggplot() +
-    geom_sf(data = county_sf, fill = "#e6e9ec", color = alpha("black", .2)) +
-    geom_sf(aes(fill = name), color = alpha("black", .2)) +
-    scale_fill_manual(values = c(
+    geom_sf(aes(fill = name, color = name)) +
+    geom_sf(data = spData::us_states, fill = NA, color = "black", linewidth = .3) +
+    scale_fill_manual(values = rev(c(
+        "#fad1af",
         "#ffb3b1",
         "#c4e2fa",
         "#d6cfe4",
         "#f5e9b3",
         "#62b971"
-        ),
-        guide = guide_legend(reverse = TRUE)
+        ))
+    ) +
+    scale_color_manual(values = rev(c(
+        "#fad1af",
+        "#ffb3b1",
+        "#c4e2fa",
+        "#d6cfe4",
+        "#f5e9b3",
+        "black"
+        ))
     ) +
     theme_minimal() +
     labs(
-        fill = "Land cover category with greatest\nland area converted to solar facilties"
+        fill =  "",
+        color = ""
     ) +
-    theme(plot.background = element_rect(fill = "white", color = "white"))
+    theme(plot.background = element_rect(fill = "white", color = "white"), panel.grid = element_blank(), axis.text = element_blank())
 
-ggsave("results/county_category_map.png", p5, width = 11, height = 7)
+ggsave("results/county_category_map.svg", p5, width = 7, height = 4)
 
 # Land cover category by year
 
@@ -230,16 +245,26 @@ region_percent_lc <- county_year_lc %>%
 p7 <- region_percent_lc %>%
     mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
     mutate(REGION = factor(REGION, levels = c("Northeast", "South", "Midwest", "West"))) %>%
-    ggplot(aes(x = p_year, y = percent_value, fill = name)) +
-    geom_area(alpha = .8, color = alpha("black", .2)) +
+    ggplot(aes(x = p_year, y = percent_value, fill = name, color = name)) +
+    geom_area(linewidth = .3) +
     facet_wrap(~REGION, axes = "all") +
     scale_fill_manual(values = c(
-        "#e6e9ec",
+        "#fad1af",
         "#ffb3b1",
         "#c4e2fa",
         "#d6cfe4",
         "#f5e9b3",
         "#62b971"
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
+    scale_color_manual(values = c(
+        "#fad1af",
+        "#ffb3b1",
+        "#c4e2fa",
+        "#d6cfe4",
+        "#f5e9b3",
+        "black"
         ),
         guide = guide_legend(reverse = TRUE)
     ) +
@@ -253,7 +278,7 @@ p7 <- region_percent_lc %>%
         # axis.text.x = element_text(angle = 45, hjust = 1),
         strip.background = element_blank()
     ) +
-    labs(y = "", fill = "Land cover category", x = "Year")
+    labs(y = "", fill = "", color = "", x = "Year")
 
 ggsave("results/region_category_area_chart.svg", p7, width = 7, height = 7)
 
