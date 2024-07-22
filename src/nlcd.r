@@ -266,7 +266,7 @@ region_percent_lc <- county_year_lc %>%
 
 p7 <- region_percent_lc %>%
     mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
-    mutate(REGION = factor(REGION, levels = c("Northeast", "South", "Midwest", "West"))) %>%
+    mutate(REGION = factor(REGION, levels = c("Northeast", "South", "Midwest", "West"))) %>% # Just add wattages by hand for now, no time for proper coding
     ggplot(aes(x = p_year, y = percent_value, fill = name, color = name)) +
     geom_area(linewidth = .3) +
     facet_wrap(~REGION, axes = "all") +
@@ -300,7 +300,7 @@ p7 <- region_percent_lc %>%
         # axis.text.x = element_text(angle = 45, hjust = 1),
         strip.background = element_blank()
     ) +
-    labs(y = "", fill = "", color = "", x = "Year")
+    labs(y = "", fill = "", color = "", x = "")
 
 ggsave("results/region_category_area_chart.svg", p7, width = 7, height = 7)
 
