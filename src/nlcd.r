@@ -264,9 +264,28 @@ region_percent_lc <- county_year_lc %>%
         )
     ))
 
+state_sf %>%
+    st_drop_geometry() %>%
+    group_by(REGION) %>%
+    summarize(solar_area = sum(solar_area), forest = sum(Forest)) %>%
+    mutate(across(c(solar_area, forest), \(x) x/sq_m_per_acre))
+
+region_percent_lc %>%
+    group_by(REGION) %>%
+    summarise(sum(value))
+
 p7 <- region_percent_lc %>%
     mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
-    mutate(REGION = factor(REGION, levels = c("Northeast", "South", "Midwest", "West"))) %>% # Just add wattages by hand for now, no time for proper coding
+    mutate(REGION = factor(
+        REGION, 
+        labels = c(
+            "Northeast: 4,702 forest acres converted", 
+            "South: 23,831 forest acres converted", 
+            "Midwest: 255 forest acres converted", 
+            "West: 14 forest acres converted"
+        ),
+        levels = c("Northeast", "South", "Midwest", "West")
+    )) %>% # Just add wattages by hand for now, no time for proper coding
     ggplot(aes(x = p_year, y = percent_value, fill = name, color = name)) +
     geom_area(linewidth = .3) +
     facet_wrap(~REGION, axes = "all") +
