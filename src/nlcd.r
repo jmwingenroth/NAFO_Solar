@@ -336,3 +336,26 @@ p8 <- county_year_lc %>%
     labs(x = "Year", y = "", title = "Acres of forest converted to solar facilities")
 
 ggsave("results/forest_historical.png", p8, width = 7, height = 4)
+
+uspv_lc %>%
+    mutate_all(\(x) x*30^2) %>%
+    mutate_all(replace_na, 0) %>%
+    bind_cols(uspvdb) %>%
+    transmute(
+        p_name,
+        p_state,
+        xlong,
+        ylat,
+        p_year,
+        p_area,
+        p_cap_dc,
+        p_cap_ac,
+        Water = `Open Water`,
+        Developed = rowSums(across(contains("Developed"))),
+        Forest = rowSums(across(contains("Forest"))),
+        Barren = rowSums(across(contains("Barren"))),
+        Shrubland = rowSums(across(contains("Scrub"))),
+        Herbaceous,
+        Agricultural = `Hay/Pasture` + `Cultivated Crops`,
+        Wetlands = rowSums(across(contains("Wetlands")))
+    ) %>% st_drop_geometry() %>% write_csv("results/facility_areas.csv")
