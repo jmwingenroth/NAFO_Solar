@@ -1,0 +1,76 @@
+##### Make projection figures using USPVDB and EIA AEO datasets #####
+
+library(tidyverse)
+library(sf)
+library(broom)
+library(cowplot)
+
+### Load data
+
+aeo_raw <- read_csv("data/Renewable_Energy_All_Sectors_Net_Summer_Capacity_Solar.csv", skip = 4) 
+
+nrel_raw <- read_csv("data/Solar_Futures_Study_DOE_NREL.csv")
+
+### Tidy data
+
+proj_tidy <- aeo_raw %>%
+    rename(aeo_ref = 2, aeo_high = 3, aeo_low = 4) %>%
+    mutate(across(aeo_ref:aeo_low, \(x) x/watt_dc_per_ac)) %>%     # Convert from DC to AC
+    full_join(nrel_raw) %>%
+    rename(nrel_ref = 5, nrel_decarb = 6, nrel_decarb_e = 7) %>%   # Convert to acres
+    mutate(across(aeo_ref:nrel_decarb_e, \(x) x*1e3*acre_per_MW)) %>%
+    arrange(Year)
+
+historical_area <- uspvdb_raw %>%
+    group_by(p_year) %>%
+    summarise(area = sum(p_area/sq_m_per_acre)) %>%
+    mutate(cumul_area = cumsum(area))
+
+# Create projection figure
+
+p1 <- proj_tidy %>%
+    pivot_longer(aeo_ref:nrel_decarb_e) %>%
+    mutate(name = factor(name, 
+        levels = c(
+            "nrel_decarb_e",
+            "nrel_decarb",
+            "nrel_ref",
+            "aeo_high",
+            "aeo_ref",
+            "aeo_low"
+        ),
+        labels = c(
+            "SFS (2021), w/ decarbonization & electrification     ",
+            "SFS (2021), w/ decarbonization     ",
+            "SFS (2021), reference case     ",
+            "AEO (2023), high growth & low solar price     ",
+            "AEO (2023), reference case     ",
+            "AEO (2023), low growth & high solar price     "
+        )
+    )) %>%
+    filter(!is.na(value)) %>%
+    ggplot(aes(x = Year, y = value, color = name, linetype = name)) +
+    geom_line() +
+    theme_bw() +
+    scale_color_manual(values = c(rep("red",3), rep("blue",3))) +
+    scale_linetype_manual(
+        values = c(
+            "12",
+            "42",
+            "solid",
+            "42",
+            "solid",
+            "12"
+        )
+    ) +
+    scale_y_continuous(
+        limits = c(0, 1.25e7), 
+        labels = c(0, paste0(c(2.5, 5, 7.5, 10, 12.5), "M")),
+        breaks = seq(0, 1.25e7, by = 2.5e6),
+        expand = c(0,0)
+    ) +
+    labs(x = "", y = "", color = "", linetype = "") +
+    theme(legend.position = "bottom", legend.spacing.x = unit(.5, "in")) +
+    guides(color = guide_legend(nrow = 3), linetype = guide_legend(nrow = 3))
+
+ggsave("results/eia_nrel_projections.svg", p1, width = 7, height = 4)

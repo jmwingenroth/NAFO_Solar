@@ -17,7 +17,11 @@
 	- Enhanced geolocation controls.
 	- Extended solar facility pop-up information.
 
- # EIA_data.csv
-- 2023 Annual Energy Outlook
-- Renewable Energy All Sectors Net Summer Capacity Solar (Case Reference case)
-- Accessed from [EIA website](https://www.eia.gov/outlooks/aeo/data/browser/#/?id=16-AEO2023&region=0-0&cases=ref2023&start=2021&end=2050&f=A&linechart=~ref2023-d020623a.53-16-AEO2023&ctype=linechart&sourcekey=0)
+# Renewable Energy All Sectors Net Summer Capacity Solar.csv
+- https://www.eia.gov/outlooks/aeo/data/browser/#/?id=16-AEO2023&region=0-0&cases=ref2023~highmaclowZTC~lowmachighZTC&start=2021&end=2050&f=A&linechart=~~~ref2023-d020623a.53-16-AEO2023~highmaclowZTC-d020623a.53-16-AEO2023~lowmachighZTC-d020623a.53-16-AEO2023&ctype=linechart&sourcekey=0
+- 14:53:04 GMT-0400 (Eastern Daylight Time)
+- Data source: U.S. Energy Information Administration
+
+# Solar_Future_Study_DOE_NREL.csv
+- Solar Futures Study by DOE & NREL (2021)
+- https://www.energy.gov/eere/solar/solar-futures-study
