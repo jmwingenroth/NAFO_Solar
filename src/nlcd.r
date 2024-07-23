@@ -246,7 +246,7 @@ region_percent_lc <- county_year_lc %>%
     mutate(Other = Water + Wetlands + Barren) %>%
     select(-Water, -Wetlands, -Barren) %>%
     pivot_longer(Developed:Other) %>%
-    left_join(st_drop_geometry(state_sf), by = c("p_state" = "state.abb")) %>%
+    left_join(state_key, by = c("p_state" = "state.abb")) %>%
     group_by(REGION, p_year, name) %>%
     summarise(value = sum(value)) %>%
     group_by(REGION, p_year) %>%
@@ -263,16 +263,6 @@ region_percent_lc <- county_year_lc %>%
             "Forest"
         )
     ))
-
-state_sf %>%
-    st_drop_geometry() %>%
-    group_by(REGION) %>%
-    summarize(solar_area = sum(solar_area), forest = sum(Forest)) %>%
-    mutate(across(c(solar_area, forest), \(x) x/sq_m_per_acre))
-
-region_percent_lc %>%
-    group_by(REGION) %>%
-    summarise(sum(value))
 
 p7 <- region_percent_lc %>%
     mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
