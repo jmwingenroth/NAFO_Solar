@@ -52,7 +52,7 @@ p1 <- proj_tidy %>%
     ggplot(aes(x = Year, y = value, color = name, linetype = name)) +
     geom_line() +
     theme_bw() +
-    scale_color_manual(values = c(rep("red",3), rep("blue",3))) +
+    scale_color_manual(values = c(rep("#88c4f4",3), rep("#ff6663",3))) +
     scale_linetype_manual(
         values = c(
             "12",
