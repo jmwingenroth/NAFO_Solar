@@ -16,12 +16,27 @@ alaska_map <- spData::alaska %>%
     geom_sf(data = spData::alaska, fill = "white") +
     theme_void()
 
-p1 <- st_transform(spData::us_states, crs) %>%
-    ggplot(aes(fill = NAME %in% unlist(rps_states))) +
-    geom_sf(show.legend = FALSE) +
+rps_sf <- rps_states %>%
+    mutate(label = factor(
+        fifty_or_greater, 
+        levels = c(TRUE, FALSE),
+        labels = c(
+        "At least 50% renewables", 
+        "Below 50% renewables"
+        )
+    )) %>%
+    left_join(spData::us_states, by = c("State" = "NAME")) %>%
+    st_as_sf()
+
+p1 <- rps_sf %>%
+    st_transform(crs) %>%
+    ggplot(aes(fill = label)) +
+    geom_sf(data = spData::us_states, fill = "white") +
+    geom_sf() +
     annotation_custom(ggplotGrob(hawaii_map), xmin = -1.3e6, xmax = -7e5, ymin = -5e5, ymax = 1.2e6) +
     annotation_custom(ggplotGrob(alaska_map), xmin = -3e6, xmax = -1.5e6, ymin = -5e5, ymax = 1.8e6) +
-    scale_fill_manual(values = c("white", "#50b161")) +
+    scale_fill_manual(values = c("#50b161", "#a8d8b0")) +
+    labs(fill = "RPS targets:") +
     theme_minimal() +
     theme(
         plot.background = element_rect(fill = "white", color = "white"), 
