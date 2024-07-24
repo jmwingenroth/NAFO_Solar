@@ -8,6 +8,7 @@ acre_per_MW <- 7.5
 run_all <- function() {
     source("src/nlcd.r")
     source("src/eia_nrel.r")
+    source("src/rps_states.r")
 }
 
 start <- Sys.time()
