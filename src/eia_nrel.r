@@ -21,11 +21,6 @@ proj_tidy <- aeo_raw %>%
     mutate(across(aeo_ref:nrel_decarb_e, \(x) x*1e3*acre_per_MW)) %>%
     arrange(Year)
 
-historical_area <- uspvdb_raw %>%
-    group_by(p_year) %>%
-    summarise(area = sum(p_area/sq_m_per_acre)) %>%
-    mutate(cumul_area = cumsum(area))
-
 # Create projection figure
 
 p1 <- proj_tidy %>%
