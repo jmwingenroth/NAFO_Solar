@@ -1,29 +1,29 @@
-State
-Washington
-Oregon
-California
-Nevada
-Arizona
-New Mexico
-Colorado
-Texas
-Minnesota
-Missouri
-Illinois
-Michigan
-Ohio
-Pennsylvania
-Maryland
-Virginia
-North Carolina
-New York
-New Jersey
-Delaware
-Vermont
-New Hampshire
-Massachusetts
-Connecticut
-Rhode Island
-Maine
-Hawaii
-District of Columbia
+State, 50_or_greater
+Washington, TRUE
+Oregon, TRUE
+California, TRUE
+Nevada, TRUE
+Arizona, FALSE
+New Mexico, TRUE
+Colorado, TRUE
+Texas, FALSE
+Minnesota, TRUE
+Missouri, FALSE
+Illinois, TRUE
+Michigan, FALSE
+Ohio, FALSE
+Pennsylvania, FALSE
+Maryland, TRUE
+Virginia, TRUE
+North Carolina, TRUE
+New York, TRUE
+New Jersey, TRUE
+Delaware, FALSE
+Vermont, TRUE
+New Hampshire, FALSE
+Massachusetts, FALSE
+Connecticut, TRUE
+Rhode Island, TRUE
+Maine, TRUE
+Hawaii, TRUE
+District of Columbia, TRUE
