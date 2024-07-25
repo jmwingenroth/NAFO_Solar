@@ -1,0 +1,52 @@
+stname,stfips,stAB,stRegion
+Alabama,1,AL,South
+Alaska,2,AK,Pacific
+Arizona,4,AZ,Rockies
+Arkansas,5,AR,South
+California,6,CA,Pacific
+Colorado,8,CO,Rockies
+Connecticut,9,CT,North
+Delaware,10,DE,North
+District of Columbia,11,DC,North
+Florida,12,FL,South
+Georgia,13,GA,South
+Hawaii,15,HI,Pacific
+Idaho,16,ID,Rockies
+Illinois,17,IL,North
+Indiana,18,IN,North
+Iowa,19,IA,North
+Kansas,20,KS,Plains
+Kentucky,21,KY,South
+Louisiana,22,LA,South
+Maine,23,ME,North
+Maryland,24,MD,North
+Massachusetts,25,MA,North
+Michigan,26,MI,North
+Minnesota,27,MN,North
+Mississippi,28,MS,South
+Missouri,29,MO,North
+Montana,30,MT,Rockies
+Nebraska,31,NE,Plains
+Nevada,32,NV,Rockies
+New Hampshire,33,NH,North
+New Jersey,34,NJ,North
+New Mexico,35,NM,Rockies
+New York,36,NY,North
+North Carolina,37,NC,South
+North Dakota,38,ND,Plains
+Ohio,39,OH,North
+Oklahoma,40,OK,Plains
+Oregon,41,OR,Pacific
+Pennsylvania,42,PA,North
+Rhode Island,44,RI,North
+South Carolina,45,SC,South
+South Dakota,46,SD,Plains
+Tennessee,47,TN,South
+Texas,48,TX,Plains
+Utah,49,UT,Rockies
+Vermont,50,VT,North
+Virginia,51,VA,South
+Washington,53,WA,Pacific
+West Virginia,54,WV,North
+Wisconsin,55,WI,North
+Wyoming,56,WY,Rockies
