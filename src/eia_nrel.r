@@ -1,4 +1,4 @@
-##### Make projection figures using USPVDB and EIA AEO datasets #####
+##### Make projection figure using DOE/NREL SFS and EIA AEO datasets #####
 
 library(tidyverse)
 library(sf)
@@ -21,7 +21,7 @@ proj_tidy <- aeo_raw %>%
     mutate(across(aeo_ref:nrel_decarb_e, \(x) x*1e3*acre_per_MW)) %>%
     arrange(Year)
 
-# Create projection figure
+### Create projection figure
 
 p1 <- proj_tidy %>%
     pivot_longer(aeo_ref:nrel_decarb_e) %>%

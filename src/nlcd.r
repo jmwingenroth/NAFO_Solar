@@ -1,4 +1,4 @@
-##### Create maps based on NLCD and USPVDB datasets #####
+##### Create land-cover related maps and figures based on NLCD and USPVDB datasets #####
 
 ### Load packages
 

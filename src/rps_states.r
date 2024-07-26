@@ -1,3 +1,5 @@
+##### Create map showing which states have Renewable Portfolio Standards #####
+
 library(tidyverse)
 library(sf)
 library(spData)
