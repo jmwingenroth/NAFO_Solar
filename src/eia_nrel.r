@@ -18,7 +18,7 @@ proj_tidy <- aeo_raw %>%
     mutate(across(aeo_ref:aeo_low, \(x) x/watt_dc_per_ac)) %>%     # Convert from DC to AC
     full_join(nrel_raw) %>%
     rename(nrel_ref = 5, nrel_decarb = 6, nrel_decarb_e = 7) %>%   # Convert to acres
-    mutate(across(aeo_ref:nrel_decarb_e, \(x) x*1e3*acre_per_MW)) %>%
+    mutate(across(aeo_ref:nrel_decarb_e, \(x) x*1e3*acre_per_MWac)) %>%
     arrange(Year)
 
 ### Create projection figure
