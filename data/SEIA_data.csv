@@ -1,52 +1,52 @@
 States,MWdc_2024,MWdc_2029,amount_utility,scaling_to_utility
 Alabama,823.2,2298.7799999999997,almost_all,.9
-Alaska,29.88,70.91000000000001,some,.4
-Arizona,8486.68,19851.93,most,.6
-Arkansas,1122.01,5060.24,most,.6
-California,48482.25,72522.23999999999,most,.6
+Alaska,29.88,70.91000000000001,some,.5
+Arizona,8486.68,19851.93,some,.5
+Arkansas,1122.01,5060.24,some,.5
+California,48482.25,72522.23999999999,some,.5
 Colorado,4167.929999999999,7596.6500000000005,almost_all,.9
-Connecticut,1558.23,3061.27,little,.1
-Delaware,286.21,1122.04,some,.4
-District of Columbia,242.76,531.8199999999999,almost_none,0
+Connecticut,1558.23,3061.27,some,.5
+Delaware,286.21,1122.04,some,.5
+District of Columbia,242.76,531.8199999999999,almost_none,.1
 Florida,16640.4,36342.2,almost_all,.9
 Georgia,5936.49,9026.84,almost_all,.9
-Hawaii,1924.73,2980.64,some,.4
-Idaho,836.03,2263.7599999999998,most,.6
-Illinois,2947.79,10896.130000000001,some,.4
+Hawaii,1924.73,2980.64,some,.5
+Idaho,836.03,2263.7599999999998,some,.5
+Illinois,2947.79,10896.130000000001,some,.5
 Indiana,1904.83,12747.53,almost_all,.9
-Iowa,679.15,2284,most,.6
-Kansas,157.84,1717.1899999999998,some,.4
-Kentucky,190.82000000000002,3844.24,most,.6
+Iowa,679.15,2284,some,.5
+Kansas,157.84,1717.1899999999998,some,.5
+Kentucky,190.82000000000002,3844.24,some,.5
 Louisiana,616.8299999999999,5335.92,almost_all,.9
 Maine,1107.81,2751.19,almost_all,.9
-Maryland,2183,4496.75,little,.1
-Massachusetts,5232.73,7456.64,some,.4
+Maryland,2183,4496.75,some,.5
+Massachusetts,5232.73,7456.64,some,.5
 Michigan,1457.26,5239.84,almost_all,.9
 Minnesota,2811.4500000000003,5326.820000000001,almost_all,.9
 Mississippi,576.7700000000001,3097.8900000000003,almost_all,.9
-Missouri,653.87,4197.38,little,.1
+Missouri,653.87,4197.38,some,.5
 Montana,298.46999999999997,1438.84,almost_all,.9
 Nebraska,202.58,619.19,almost_all,.9
 Nevada,7325.469999999999,15749,almost_all,.9
-New Hampshire,283.89,848.21,almost_none,0
-New Jersey,5362.18,8012.01,little,.1
+New Hampshire,283.89,848.21,almost_none,.1
+New Jersey,5362.18,8012.01,some,.5
 New Mexico,2576.1,8074.13,almost_all,.9
-New York,5834.360000000001,16841.51,most,.6
+New York,5834.360000000001,16841.51,some,.5
 North Carolina,9573.67,12385.8,almost_all,.9
-North Dakota,1.87,354.2,some,.4
+North Dakota,1.87,354.2,some,.5
 Ohio,2821.9500000000003,12094.94,almost_all,.9
-Oklahoma,189.36,2077.3100000000004,some,.4
-Oregon,1814.6399999999999,3975.66,most,.6
-Pennsylvania,2167.67,5432.05,most,.6
-Rhode Island,1029.34,2012.49,little,.1
+Oklahoma,189.36,2077.3100000000004,some,.5
+Oregon,1814.6399999999999,3975.66,some,.5
+Pennsylvania,2167.67,5432.05,some,.5
+Rhode Island,1029.34,2012.49,some,.5
 South Carolina,2565.79,5183.1,almost_all,.9
 South Dakota,268.12,676.9399999999999,almost_all,.9
 Tennessee,895.19,2494.7599999999998,almost_all,.9
 Texas,32142.34,82646.26,almost_all,.9
 Utah,3110.11,8739.88,almost_all,.9
-Vermont,429.66,597.7,little,.1
+Vermont,429.66,597.7,some,.5
 Virginia,5417.99,13731.79,almost_all,.9
-Washington,710.88,2258.53,some,.4
-West Virginia,165.09,1045.61,almost_none,0
+Washington,710.88,2258.53,some,.5
+West Virginia,165.09,1045.61,almost_none,.1
 Wisconsin,2326.4900000000002,7343.18,almost_all,.9
 Wyoming,124.43,797.89,almost_all,.9

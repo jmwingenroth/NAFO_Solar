@@ -25,3 +25,14 @@
 # Solar_Future_Study_DOE_NREL.csv
 - Solar Futures Study by DOE & NREL (2021)
 - https://www.energy.gov/eere/solar/solar-futures-study
+
+# SEIA data
+
+- Data were copied manually from state-level projections on the SEIA website (e.g., [North Carolina Solar](https://www.seia.org/state-solar-policy/north-carolina-solar))
+- Scaling from total capacity to utility-scale capacity was challenging because no numeric data were provided
+	- States were grouped into three categories based on visual analysis of column charts
+		- Almost no utility scale solar (0.1)
+		- Some utility scale solar (0.5)
+		- Almost all utility scale solar (0.9)
+	- Projections for total solar in 2024 and 2029 were then multiplied by the corresponding scaling factor to estimate utility-scale solar
+	- This method closely matched the combination of utility-scale and community solar (which were treated interchangably) from the [SEIA website](https://www.seia.org/solar-industry-research-data)
