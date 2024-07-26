@@ -66,7 +66,6 @@ p1 <- all_data %>%
         aesthetics = c("fill", "color")
     ) +
     scale_y_continuous(limits = c(0, 120000), expand = c(0,0), minor_breaks = NULL) +
-    scale_x_discrete(breaks = NULL) +
     labs(x = "", y = "")
 
 ggsave("results/seia_projections.svg", p1, width = 7, height = 4)
