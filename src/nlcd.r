@@ -21,6 +21,8 @@ eastern_seaboard <- c(
 
 ### Load data
 
+regions_data <- read_csv("data/StateFIPS.csv")
+
 nlcd_file <- list.files("L:/Project-SCC/NLCD_GIS_2001/", pattern = "img", full.names = TRUE)
 nlcd_rast <- read_stars(nlcd_file)
 
@@ -30,8 +32,6 @@ uspvdb <- read_sf("data/uspvdb_v1_0_20231108.geojson") %>%
     st_transform("+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs") # Match NLCD CRS
 
 if (st_crs(nlcd_rast) != st_crs(uspvdb)) stop("CRS mismatch")
-
-regions_data <- read_csv("data/StateFIPS.csv")
 
 ### Clip NLCD with USPVDB polygons
 
@@ -60,6 +60,12 @@ uspv_lc <- uspv_stars %>%
     lapply(filter, !is.na(land_cover)) %>%
     lapply(pivot_wider, names_from = land_cover, values_from = n) %>%
     bind_rows()
+
+land_cover_output_data <- bind_cols(uspvdb, uspv_lc) %>% 
+    st_drop_geometry() %>%
+    mutate(across(`Hay/Pasture`:`Open Water`, \(x) x*30^2)) # Convert to m^2
+
+write_csv(land_cover_output_data, "results/uspvdb_land_cover.csv")
 
 county_year_lc <- uspvdb %>%
     st_drop_geometry() %>%
@@ -339,3 +345,4 @@ p7_combo <- ggdraw(p7) +
     draw_plot(state_key_grob, .7, .06, .3, .3)
 
 ggsave("results/region_category_area_chart.svg", p7_combo, width = 7, height = 5)
+
