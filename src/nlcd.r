@@ -367,3 +367,8 @@ uspv_lc %>%
         Agricultural = `Hay/Pasture` + `Cultivated Crops`,
         Wetlands = rowSums(across(contains("Wetlands")))
     ) %>% st_drop_geometry() %>% write_csv("results/facility_areas.csv")
+
+county_sf %>%
+    st_drop_geometry() %>%
+    select(state, county_id, county_area, solar_area, `solar_density (acres/mi2)` = solar_density) %>%
+    write_csv("results/fig2_data.csv")
