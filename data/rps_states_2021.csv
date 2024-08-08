@@ -1,0 +1,29 @@
+State, fifty_or_greater
+Washington, TRUE
+Oregon, TRUE
+California, TRUE
+Nevada, TRUE
+Arizona, FALSE
+New Mexico, TRUE
+Colorado, TRUE
+Texas, FALSE
+Minnesota, TRUE
+Missouri, FALSE
+Illinois, TRUE
+Michigan, FALSE
+Ohio, FALSE
+Pennsylvania, FALSE
+Maryland, TRUE
+Virginia, TRUE
+North Carolina, TRUE
+New York, TRUE
+New Jersey, TRUE
+Delaware, FALSE
+Vermont, TRUE
+New Hampshire, FALSE
+Massachusetts, FALSE
+Connecticut, TRUE
+Rhode Island, TRUE
+Maine, TRUE
+Hawaii, TRUE
+District of Columbia, TRUE

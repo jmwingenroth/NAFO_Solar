@@ -1,4 +1,4 @@
-##### Create maps based on NLCD and USPVDB datasets #####
+##### Create land-cover related maps and figures based on NLCD and USPVDB datasets #####
 
 ### Load packages
 
@@ -7,6 +7,7 @@ library(sf)
 library(stars)
 library(tigris)
 library(spData)
+library(cowplot)
 
 sf_use_s2(FALSE)
 options(tigris_use_cache = TRUE)
@@ -19,6 +20,8 @@ eastern_seaboard <- c(
 )
 
 ### Load data
+
+regions_data <- read_csv("data/StateFIPS.csv")
 
 nlcd_file <- list.files("L:/Project-SCC/NLCD_GIS_2001/", pattern = "img", full.names = TRUE)
 nlcd_rast <- read_stars(nlcd_file)
@@ -57,6 +60,12 @@ uspv_lc <- uspv_stars %>%
     lapply(filter, !is.na(land_cover)) %>%
     lapply(pivot_wider, names_from = land_cover, values_from = n) %>%
     bind_rows()
+
+land_cover_output_data <- bind_cols(uspvdb, uspv_lc) %>% 
+    st_drop_geometry() %>%
+    mutate(across(`Hay/Pasture`:`Open Water`, \(x) x*30^2)) # Convert to m^2
+
+write_csv(land_cover_output_data, "results/uspvdb_land_cover.csv")
 
 county_year_lc <- uspvdb %>%
     st_drop_geometry() %>%
@@ -99,10 +108,10 @@ county_tidy <-  county_raw %>%
     group_by(state, county_id) %>%
     summarise(county_area = sum(ALAND))
 
-state_key <- tibble(state.name, state.abb) %>%
-    bind_rows(tibble(state.name = "District of Columbia", state.abb = "DC")) %>%
-    left_join(spData::us_states, c("state.name" = "NAME")) %>%
-    st_as_sf()
+state_key <- regions_data %>%
+    left_join(spData::us_states, c("stname" = "NAME")) %>%
+    st_as_sf() %>%
+    st_transform(st_crs("+proj=aea +lat_0=37.5 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +type=crs"))
 
 county_sf <- county_tidy %>%
     st_intersection(st_union(spData::us_states)) %>%
@@ -162,7 +171,7 @@ p3 <- county_sf %>%
     ggplot() +
     geom_sf(aes(fill = ff_bins, color = ff_bins)) +
     geom_sf(
-        data = filter(state_key, state.abb %in% eastern_seaboard), 
+        data = filter(state_key, stAB %in% eastern_seaboard), 
         fill = NA, 
         color = "black", linewidth = .3) +
     scale_fill_viridis_d(
@@ -246,10 +255,10 @@ region_percent_lc <- county_year_lc %>%
     mutate(Other = Water + Wetlands + Barren) %>%
     select(-Water, -Wetlands, -Barren) %>%
     pivot_longer(Developed:Other) %>%
-    left_join(st_drop_geometry(state_sf), by = c("p_state" = "state.abb")) %>%
-    group_by(REGION, p_year, name) %>%
+    left_join(state_key, by = c("p_state" = "stAB")) %>%
+    group_by(stRegion, p_year, name) %>%
     summarise(value = sum(value)) %>%
-    group_by(REGION, p_year) %>%
+    group_by(stRegion, p_year) %>%
     mutate(percent_value = value/sum(value)) %>%
     ungroup() %>%
     mutate(name = factor(
@@ -264,31 +273,15 @@ region_percent_lc <- county_year_lc %>%
         )
     ))
 
-state_sf %>%
-    st_drop_geometry() %>%
-    group_by(REGION) %>%
-    summarize(solar_area = sum(solar_area), forest = sum(Forest)) %>%
-    mutate(across(c(solar_area, forest), \(x) x/sq_m_per_acre))
-
-region_percent_lc %>%
-    group_by(REGION) %>%
-    summarise(sum(value))
-
 p7 <- region_percent_lc %>%
-    mutate(REGION = if_else(REGION == "Norteast", "Northeast", REGION)) %>%
-    mutate(REGION = factor(
-        REGION, 
-        labels = c(
-            "Northeast: 4,702 forest acres converted", 
-            "South: 23,831 forest acres converted", 
-            "Midwest: 255 forest acres converted", 
-            "West: 14 forest acres converted"
-        ),
-        levels = c("Northeast", "South", "Midwest", "West")
-    )) %>% # Just add wattages by hand for now, no time for proper coding
-    ggplot(aes(x = p_year, y = percent_value, fill = name, color = name)) +
+    mutate(stRegion = factor(
+        stRegion, 
+        levels = c("Pacific", "Rockies", "Plains", "North", "South"),
+        labels = c("1: Pacific", "2: Rockies", "3: Plains", "4: Northeast", "5: Southeast")
+    )) %>%
+    ggplot(aes(x = p_year, y = value/sq_m_per_acre, fill = name, color = name)) +
     geom_area(linewidth = .3) +
-    facet_wrap(~REGION, axes = "all") +
+    facet_wrap(~stRegion) +
     scale_fill_manual(values = c(
         "#fad1af",
         "#ffb3b1",
@@ -297,7 +290,7 @@ p7 <- region_percent_lc %>%
         "#f5e9b3",
         "#62b971"
         ),
-        guide = guide_legend(reverse = TRUE)
+        guide = guide_legend(reverse = TRUE, ncol = 2)
     ) +
     scale_color_manual(values = c(
         "#fad1af",
@@ -307,35 +300,50 @@ p7 <- region_percent_lc %>%
         "#f5e9b3",
         "black"
         ),
-        guide = guide_legend(reverse = TRUE)
+        guide = guide_legend(reverse = TRUE, ncol = 2)
     ) +
-    scale_x_continuous(limits = c(2010, 2021), breaks = c(2010, 2015, 2020), expand = c(0,0), minor_breaks = NULL) +
-    scale_y_continuous(limits = c(0, 1), expand = c(0,0), labels = scales::percent) +
+    scale_x_continuous(limits = c(2009, 2021), breaks = c(2010, 2015, 2020), expand = c(0,0), minor_breaks = NULL) +
+    scale_y_continuous(limits = c(0, 25000), expand = c(0,0), minor_breaks = NULL) +
     theme_bw() +
     theme(
-        panel.spacing = unit(.25, "inch"), 
-        legend.position = "bottom",
+        legend.position = "inside",
+        legend.text = element_text(size = 8),
+        legend.key.size = unit(.8, "lines"),
+        legend.position.inside = c(5/6, .4),
+        legend.background = element_blank(),
         panel.grid.minor = element_blank(),
-        # axis.text.x = element_text(angle = 45, hjust = 1),
         strip.background = element_blank()
     ) +
     labs(y = "", fill = "", color = "", x = "")
 
-ggsave("results/region_category_area_chart.svg", p7, width = 7, height = 7)
 
-p8 <- county_year_lc %>%
-    filter(p_year >= 2006) %>%
-    group_by(p_year) %>%
-    summarise(forest = sum(Forest), total = sum(solar_area)) %>%
-    ggplot(aes(x = p_year, y = forest/sq_m_per_acre)) +
-    geom_line(color = "#62b971") +
-    geom_point(color = "#62b971") +
-    scale_x_continuous(limits = c(2005, 2022), expand = c(0,0), breaks = 2006:2021) +
-    theme_bw() +
-    theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(), axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(x = "Year", y = "", title = "Acres of forest converted to solar facilities")
+regions_sf <- state_key %>%
+    group_by(stRegion) %>%
+    summarize(geometry = st_union(geometry))
 
-ggsave("results/forest_historical.png", p8, width = 7, height = 4)
+labels_sf <- regions_sf %>%
+    st_centroid() %>%
+    mutate(label = factor(stRegion, levels = c("Pacific", "Rockies", "Plains", "North", "South"), labels = 1:5))
+
+state_key_grob <- state_key %>%
+    st_simplify(dTolerance = 1000) %>%
+    ggplot() +
+    geom_sf(fill = NA, color = "gray", linewidth = .1) +
+    geom_sf(data = regions_sf, fill = NA, color = "black", linewidth = .5) +
+    geom_sf_text(
+        aes(label = label),
+        data = labels_sf, 
+        size = 4,
+        nudge_x = c(-5.5e5,9e4,-4e4,1e5,0),
+        nudge_y = c(0,4e5,8.8e5,5.7e5,0)
+    ) +
+    theme_void() +
+    labs(x = "", y = "") +
+    theme(plot.background = element_rect(fill = "white", color = "white"), panel.grid = element_blank(), axis.text = element_blank())
+
+p7_combo <- ggdraw(p7) +
+    draw_plot(state_key_grob, .7, .06, .3, .3)
+
 
 uspv_lc %>%
     mutate_all(\(x) x*30^2) %>%
