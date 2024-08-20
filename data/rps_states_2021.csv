@@ -6,11 +6,12 @@ Nevada, TRUE
 Arizona, FALSE
 New Mexico, TRUE
 Colorado, TRUE
-Texas, FALSE
 Minnesota, TRUE
 Missouri, FALSE
 Illinois, TRUE
-Michigan, FALSE
+Iowa, FALSE
+Wisconsin, TRUE
+Michigan, TRUE
 Ohio, FALSE
 Pennsylvania, FALSE
 Maryland, TRUE
@@ -18,10 +19,10 @@ Virginia, TRUE
 North Carolina, TRUE
 New York, TRUE
 New Jersey, TRUE
-Delaware, FALSE
+Delaware, TRUE
 Vermont, TRUE
 New Hampshire, FALSE
-Massachusetts, FALSE
+Massachusetts, TRUE
 Connecticut, TRUE
 Rhode Island, TRUE
 Maine, TRUE

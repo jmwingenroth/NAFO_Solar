@@ -36,3 +36,7 @@
 		- Almost all utility scale solar (0.9)
 	- Projections for total solar in 2024 and 2029 were then multiplied by the corresponding scaling factor to estimate utility-scale solar
 	- This method closely matched the combination of utility-scale and community solar (which were treated interchangably) from the [SEIA website](https://www.seia.org/solar-industry-research-data)
+
+# RPS states data
+
+- Data were sourced from a [DSIRE presentation slide](https://ncsolarcen-prod.s3.amazonaws.com/wp-content/uploads/2023/12/RPS-CES-Dec2023-1.pdf)
