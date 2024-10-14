@@ -26,7 +26,7 @@ regions_data <- read_csv("data/StateFIPS.csv")
 nlcd_file <- list.files("L:/Project-SCC/NLCD_GIS_2001/", pattern = "img", full.names = TRUE)
 nlcd_rast <- read_stars(nlcd_file)
 
-uspvdb <- read_sf("data/uspvdb_v1_0_20231108.geojson") %>%
+uspvdb <- read_sf("data/uspvdb/uspvdb_v2_0_20240801.geojson") %>%
     filter(p_year > 2001) %>% # Drop one site built before NLCD data was collected
     filter(!p_state %in% c("HI", "AK")) %>% # Drop non-contiguous states
     st_transform("+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs") # Match NLCD CRS
@@ -133,8 +133,8 @@ p1 <- county_sf %>%
         solar_density = replace_na(solar_density, -1),
         cc_bins = cut(
             solar_density,
-            breaks = c(-Inf,0,.01,.1,1,5.4), 
-            labels = c("0","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 5.4")
+            breaks = c(-Inf,0,.01,.1,1,7.501), 
+            labels = c("0","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 7.5")
         )
     ) %>%
     ggplot() +
@@ -158,14 +158,14 @@ ggsave("results/county_area_map.svg", p1, width = 7, height = 4)
 # Forest area / county area
 
 p3 <- county_sf %>%
-    filter(state %in% eastern_seaboard) %>%
+    filter(state %in% eastern_seaboard) %>% 
     st_simplify(dTolerance = 1000) %>%
     mutate(
         forest_density = replace_na(forest_density, -1),
         ff_bins = cut(
             forest_density,
-            breaks = c(-Inf,0,.01,.1,1,5.4), 
-            labels = c("0","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 3.3")
+            breaks = c(-Inf,0,.01,.1,1,3.62), 
+            labels = c("0","0.001 to 0.01", "0.01 to 0.1", "0.1 to 1", "1 to 3.6")
         )
     ) %>%
     ggplot() +
@@ -251,7 +251,7 @@ ggsave("results/county_category_map.svg", p5, width = 7, height = 4)
 # Land cover category by year
 
 region_percent_lc <- county_year_lc %>%
-    filter(p_year %in% 2006:2021) %>%
+    filter(p_year %in% 2006:2023) %>%
     mutate(Other = Water + Wetlands + Barren) %>%
     select(-Water, -Wetlands, -Barren) %>%
     pivot_longer(Developed:Other) %>%
@@ -302,7 +302,7 @@ p7 <- region_percent_lc %>%
         ),
         guide = guide_legend(reverse = TRUE, ncol = 2)
     ) +
-    scale_x_continuous(limits = c(2009, 2021), breaks = c(2010, 2015, 2020), expand = c(0,0), minor_breaks = NULL) +
+    scale_x_continuous(limits = c(2009, 2023), breaks = c(2010, 2015, 2020), expand = c(0,0), minor_breaks = NULL) +
     scale_y_continuous(limits = c(0, 25000), expand = c(0,0), minor_breaks = NULL) +
     theme_bw() +
     theme(
