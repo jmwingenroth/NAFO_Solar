@@ -4,6 +4,7 @@ library(tidyverse)
 library(sf)
 library(broom)
 library(cowplot)
+library(ggtext)
 
 ### Load data
 
@@ -25,19 +26,30 @@ proj_tidy <- aeo_raw %>%
 
 p1 <- proj_tidy %>%
     pivot_longer(aeo_ref:nrel_decarb_e) %>%
+    bind_rows(tibble(
+        Year = c(2020,2020),
+        name = c("nrel_dummy", "aeo_dummy"),
+        value = c(5e6, 5e6)
+    )) %>%
     mutate(name = factor(name, 
         levels = c(
+            "nrel_dummy",
             "nrel_ref",
             "nrel_decarb",
             "nrel_decarb_e",
+
+            "aeo_dummy",
             "aeo_ref",
             "aeo_high",
             "aeo_low"
         ),
         labels = c(
+            "**SFS (2021) Scenarios:**",
             "Reference Case     ",
             "Decarbonization     ",
             "Decarbonization plus Electrification     ",
+
+            "**AEO (2023) Scenarios:**",
             "Reference Case    ",
             "High Growth and Low Solar Price     ",
             "Low Growth and High Solar Price     "
@@ -47,12 +59,14 @@ p1 <- proj_tidy %>%
     ggplot(aes(x = Year, y = value, color = name, linetype = name)) +
     geom_line() +
     theme_bw() +
-    scale_color_manual(values = c(rep("#88c4f4",3), rep("#ff6663",3))) +
+    scale_color_manual(values = c("NA", rep("#88c4f4",3), "NA", rep("#ff6663",3))) +
     scale_linetype_manual(
         values = c(
             "solid",
+            "solid",
             "42",
             "12",
+            "solid",
             "solid",
             "42",
             "12"
@@ -65,7 +79,11 @@ p1 <- proj_tidy %>%
         expand = c(0,0)
     ) +
     labs(x = "", y = "", color = "", linetype = "") +
-    theme(legend.position = "bottom", legend.spacing.x = unit(.5, "in")) +
-    guides(color = guide_legend(nrow = 3), linetype = guide_legend(nrow = 3))
+    theme(
+        legend.position = "bottom", 
+        legend.spacing.x = unit(.5, "in"), 
+        legend.text = element_markdown()
+    ) +
+    guides(color = guide_legend(nrow = 4), linetype = guide_legend(nrow = 4))
 
 ggsave("results/eia_nrel_projections.svg", p1, width = 7, height = 4)
