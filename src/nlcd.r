@@ -23,7 +23,7 @@ eastern_seaboard <- c(
 
 regions_data <- read_csv("data/StateFIPS.csv")
 
-nlcd_file <- list.files("L:/Project-SCC/NLCD_GIS_2001/", pattern = "img", full.names = TRUE)
+nlcd_file <- list.files("misc/NLCD", pattern = "img", full.names = TRUE)
 nlcd_rast <- read_stars(nlcd_file)
 
 uspvdb <- read_sf("data/uspvdb_v1_0_20231108.geojson") %>%
@@ -281,7 +281,7 @@ p7 <- region_percent_lc %>%
     )) %>%
     ggplot(aes(x = p_year, y = value/sq_m_per_acre, fill = name, color = name)) +
     geom_area(linewidth = .3) +
-    facet_wrap(~stRegion) +
+    facet_wrap(~stRegion, axes = "all_x") +
     scale_fill_manual(values = c(
         "#fad1af",
         "#ffb3b1",
@@ -303,7 +303,7 @@ p7 <- region_percent_lc %>%
         guide = guide_legend(reverse = TRUE, ncol = 2)
     ) +
     scale_x_continuous(limits = c(2009, 2021), breaks = c(2010, 2015, 2020), expand = c(0,0), minor_breaks = NULL) +
-    scale_y_continuous(limits = c(0, 25000), expand = c(0,0), minor_breaks = NULL) +
+    scale_y_continuous(limits = c(0, 25000), expand = c(0,0), minor_breaks = NULL, labels = scales::comma) +
     theme_bw() +
     theme(
         legend.position = "inside",
