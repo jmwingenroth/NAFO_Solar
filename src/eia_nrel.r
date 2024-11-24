@@ -27,20 +27,20 @@ p1 <- proj_tidy %>%
     pivot_longer(aeo_ref:nrel_decarb_e) %>%
     mutate(name = factor(name, 
         levels = c(
-            "nrel_decarb_e",
-            "nrel_decarb",
             "nrel_ref",
-            "aeo_high",
+            "nrel_decarb",
+            "nrel_decarb_e",
             "aeo_ref",
+            "aeo_high",
             "aeo_low"
         ),
         labels = c(
-            "SFS (2021), w/ decarbonization & electrification     ",
-            "SFS (2021), w/ decarbonization     ",
-            "SFS (2021), reference case     ",
-            "AEO (2023), high growth & low solar price     ",
-            "AEO (2023), reference case     ",
-            "AEO (2023), low growth & high solar price     "
+            "Reference Case     ",
+            "Decarbonization     ",
+            "Decarbonization plus Electrification     ",
+            "Reference Case    ",
+            "High Growth and Low Solar Price     ",
+            "Low Growth and High Solar Price     "
         )
     )) %>%
     filter(!is.na(value)) %>%
@@ -50,11 +50,11 @@ p1 <- proj_tidy %>%
     scale_color_manual(values = c(rep("#88c4f4",3), rep("#ff6663",3))) +
     scale_linetype_manual(
         values = c(
+            "solid",
+            "42",
             "12",
-            "42",
             "solid",
             "42",
-            "solid",
             "12"
         )
     ) +

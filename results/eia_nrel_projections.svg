@@ -48,11 +48,11 @@
 <polyline points='204.88,171.79 204.88,5.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='341.46,171.79 341.46,5.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='478.03,171.79 478.03,5.48 ' style='stroke-width: 1.07; stroke: #EBEBEB; stroke-linecap: butt;' />
-<polyline points='68.30,163.80 273.17,72.00 478.03,15.13 ' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
-<polyline points='68.30,163.80 273.17,95.95 478.03,67.01 ' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <polyline points='68.30,163.80 273.17,133.87 478.03,104.93 ' style='stroke-width: 1.07; stroke: #88C4F4; stroke-linecap: butt;' />
-<polyline points='95.61,162.18 109.27,159.50 122.93,156.31 136.59,152.46 150.25,147.81 163.90,142.14 177.56,138.44 191.22,137.27 204.88,135.40 218.53,132.27 232.19,129.79 245.85,125.58 259.51,122.44 273.17,119.12 286.82,114.49 300.48,111.40 314.14,108.59 327.80,105.55 341.46,103.48 355.11,100.75 368.77,97.89 382.43,93.44 396.09,89.00 409.74,85.19 423.40,82.41 437.06,79.11 450.72,74.27 464.38,70.04 478.03,64.40 ' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
+<polyline points='68.30,163.80 273.17,95.95 478.03,67.01 ' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
+<polyline points='68.30,163.80 273.17,72.00 478.03,15.13 ' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
 <polyline points='95.61,162.19 109.27,159.50 122.93,156.32 136.59,152.50 150.25,147.93 163.90,144.07 177.56,141.54 191.22,139.92 204.88,138.61 218.53,136.40 232.19,133.77 245.85,132.06 259.51,130.06 273.17,129.03 286.82,126.96 300.48,125.35 314.14,123.36 327.80,122.20 341.46,120.46 355.11,119.27 368.77,117.65 382.43,115.84 396.09,113.71 409.74,111.15 423.40,108.70 437.06,106.92 450.72,105.23 464.38,103.16 478.03,101.14 ' style='stroke-width: 1.07; stroke: #FF6663; stroke-linecap: butt;' />
+<polyline points='95.61,162.18 109.27,159.50 122.93,156.31 136.59,152.46 150.25,147.81 163.90,142.14 177.56,138.44 191.22,137.27 204.88,135.40 218.53,132.27 232.19,129.79 245.85,125.58 259.51,122.44 273.17,119.12 286.82,114.49 300.48,111.40 314.14,108.59 327.80,105.55 341.46,103.48 355.11,100.75 368.77,97.89 382.43,93.44 396.09,89.00 409.74,85.19 423.40,82.41 437.06,79.11 450.72,74.27 464.38,70.04 478.03,64.40 ' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <polyline points='95.61,162.20 109.27,159.54 122.93,156.38 136.59,154.60 150.25,153.68 163.90,152.08 177.56,151.20 191.22,149.69 204.88,148.83 218.53,147.54 232.19,145.88 245.85,143.41 259.51,141.43 273.17,140.48 286.82,139.83 300.48,139.23 314.14,138.70 327.80,138.09 341.46,137.57 355.11,136.87 368.77,135.97 382.43,135.09 396.09,134.61 409.74,134.02 423.40,133.37 437.06,132.76 450.72,132.09 464.38,131.56 478.03,130.93 ' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
 <rect x='47.81' y='5.48' width='450.71' height='166.31' style='stroke-width: 1.07; stroke: #333333;' />
 </g>
@@ -77,24 +77,24 @@
 <text x='204.88' y='183.02' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='19.58px' lengthAdjust='spacingAndGlyphs'>2030</text>
 <text x='341.46' y='183.02' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='19.58px' lengthAdjust='spacingAndGlyphs'>2040</text>
 <text x='478.03' y='183.02' text-anchor='middle' style='font-size: 8.80px;fill: #4D4D4D; font-family: "Arial";' textLength='19.58px' lengthAdjust='spacingAndGlyphs'>2050</text>
-<rect x='52.56' y='208.76' width='441.20' height='73.76' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<rect x='63.52' y='214.24' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='65.25' y1='222.88' x2='79.08' y2='222.88' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
-<rect x='63.52' y='237.00' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='65.25' y1='245.64' x2='79.08' y2='245.64' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
-<rect x='63.52' y='259.76' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='65.25' y1='268.40' x2='79.08' y2='268.40' style='stroke-width: 1.07; stroke: #88C4F4; stroke-linecap: butt;' />
-<rect x='289.41' y='214.24' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='291.14' y1='222.88' x2='304.96' y2='222.88' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
-<rect x='289.41' y='237.00' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='291.14' y1='245.64' x2='304.96' y2='245.64' style='stroke-width: 1.07; stroke: #FF6663; stroke-linecap: butt;' />
-<rect x='289.41' y='259.76' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
-<line x1='291.14' y1='268.40' x2='304.96' y2='268.40' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
-<text x='86.28' y='226.03' style='font-size: 8.80px; font-family: "Arial";' textLength='197.65px' lengthAdjust='spacingAndGlyphs'>SFS (2021), w/ decarbonization &amp; electrification     </text>
-<text x='86.28' y='248.79' style='font-size: 8.80px; font-family: "Arial";' textLength='135.53px' lengthAdjust='spacingAndGlyphs'>SFS (2021), w/ decarbonization     </text>
-<text x='86.28' y='271.55' style='font-size: 8.80px; font-family: "Arial";' textLength='120.36px' lengthAdjust='spacingAndGlyphs'>SFS (2021), reference case     </text>
-<text x='312.17' y='226.03' style='font-size: 8.80px; font-family: "Arial";' textLength='176.12px' lengthAdjust='spacingAndGlyphs'>AEO (2023), high growth &amp; low solar price     </text>
-<text x='312.17' y='248.79' style='font-size: 8.80px; font-family: "Arial";' textLength='121.84px' lengthAdjust='spacingAndGlyphs'>AEO (2023), reference case     </text>
-<text x='312.17' y='271.55' style='font-size: 8.80px; font-family: "Arial";' textLength='176.12px' lengthAdjust='spacingAndGlyphs'>AEO (2023), low growth &amp; high solar price     </text>
+<rect x='93.67' y='208.76' width='359.00' height='73.76' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<rect x='104.62' y='214.24' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='106.35' y1='222.88' x2='120.18' y2='222.88' style='stroke-width: 1.07; stroke: #88C4F4; stroke-linecap: butt;' />
+<rect x='104.62' y='237.00' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='106.35' y1='245.64' x2='120.18' y2='245.64' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
+<rect x='104.62' y='259.76' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='106.35' y1='268.40' x2='120.18' y2='268.40' style='stroke-width: 1.07; stroke: #88C4F4; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
+<rect x='282.07' y='214.24' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='283.80' y1='222.88' x2='297.62' y2='222.88' style='stroke-width: 1.07; stroke: #FF6663; stroke-linecap: butt;' />
+<rect x='282.07' y='237.00' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='283.80' y1='245.64' x2='297.62' y2='245.64' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
+<rect x='282.07' y='259.76' width='17.28' height='17.28' style='stroke-width: 1.07; stroke: none; fill: #FFFFFF;' />
+<line x1='283.80' y1='268.40' x2='297.62' y2='268.40' style='stroke-width: 1.07; stroke: #FF6663; stroke-dasharray: 1.42,2.85; stroke-linecap: butt;' />
+<text x='127.38' y='226.03' style='font-size: 8.80px; font-family: "Arial";' textLength='75.84px' lengthAdjust='spacingAndGlyphs'>Reference Case     </text>
+<text x='127.38' y='248.79' style='font-size: 8.80px; font-family: "Arial";' textLength='75.84px' lengthAdjust='spacingAndGlyphs'>Decarbonization     </text>
+<text x='127.38' y='271.55' style='font-size: 8.80px; font-family: "Arial";' textLength='149.21px' lengthAdjust='spacingAndGlyphs'>Decarbonization plus Electrification     </text>
+<text x='304.83' y='226.03' style='font-size: 8.80px; font-family: "Arial";' textLength='73.39px' lengthAdjust='spacingAndGlyphs'>Reference Case    </text>
+<text x='304.83' y='248.79' style='font-size: 8.80px; font-family: "Arial";' textLength='142.36px' lengthAdjust='spacingAndGlyphs'>High Growth and Low Solar Price     </text>
+<text x='304.83' y='271.55' style='font-size: 8.80px; font-family: "Arial";' textLength='142.36px' lengthAdjust='spacingAndGlyphs'>Low Growth and High Solar Price     </text>
 </g>
 </svg>
