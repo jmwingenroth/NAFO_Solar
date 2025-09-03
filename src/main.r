@@ -9,7 +9,7 @@ run_all <- function() {
     source("src/nlcd.r")
     source("src/eia_nrel.r")
     source("src/rps_states.r")
-    source("src/seia.r") # depends on nlcd.r
+    source("src/seia.r")
 }
 
 start <- Sys.time()

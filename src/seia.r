@@ -41,6 +41,8 @@ all_data <- land_cover_tidy %>%
     ) %>%
     filter(!is.na(state_id))
 
+write_csv(all_data, "results/seia_projections.csv")
+
 # Create plot
 
 p1 <- all_data %>%
